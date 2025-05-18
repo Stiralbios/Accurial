@@ -10,12 +10,9 @@ build: build_docker build_precommit
 build_docker:
 	rm -rf .venv;cd deployments; DOCKER_BUILDKIT=1 docker build -t dev/project_base:latest -f Dockerfile.dev ..
 
-build_precommit:
-	cd deployments; DOCKER_BUILDKIT=1 docker build -t pre-commit-runner:latest -f Dockerfile.precommit ..
-
 # somehow it need to be rebuild to check new files todo fix
 run_precommit:
-	docker run --rm -v "./sources:/app/sources" -v "./tests:/app/tests" -t pre-commit-runner
+	nix develop . --command pre-commit run --all-files
 
 install_hooks:
 	chmod +x deployments/hooks/*
