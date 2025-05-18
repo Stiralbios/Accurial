@@ -10,7 +10,7 @@ authors = ["Aurélien Vezin <aurelien.vezin.dev@gmail.com>"]
 python = "^3.12"
 fastapi = {extras = ["standard"], version = "^0.115.2"}
 pendulum = "^3.0.0"
-SQLAlchemy = "^2.0.21"
+SQLAlchemy = "^2.0.41"
 fastapi-users = {extras = ["sqlalchemy"], version = "^14.0.0"}
 pydantic = "^2.4.2"
 pydantic-settings = "^2.0.3"
