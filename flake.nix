@@ -6,12 +6,19 @@
   };
 
   outputs = { self, nixpkgs }: {
-    devShells.default = nixpkgs.lib.mkShell {
-      buildInputs = with nixpkgs.pkgs; [
-        python312
-        poetry
-        pre-commit
-      ];
+    devShells = {
+      x86_64-linux = let
+        system = "x86_64-linux";
+        pkgs = import nixpkgs { inherit system; };
+      in {
+        default = pkgs.mkShell {
+          buildInputs = with pkgs; [
+            python312 /* 3.12.10 */
+            poetry /* 2.1.3 */
+            pre-commit /* 4.0.1 */
+          ];
+        };
+      };
     };
   };
 }
