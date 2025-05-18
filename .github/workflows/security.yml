@@ -1,0 +1,14 @@
+name: Security
+
+on: [push, pull_request]
+
+jobs:
+  bandit:
+    runs-on: ubuntu-latest
+    name: Bandit
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jpetrucciani/bandit-check@master
+        with:
+          path: 'sources/backend'
+          bandit_flags: '--ini .bandit'

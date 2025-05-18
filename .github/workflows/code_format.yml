@@ -1,0 +1,49 @@
+name: Lint
+
+on: [push, pull_request]
+
+jobs:
+  black-formatter:
+    runs-on: ubuntu-latest
+    name: Ruff formatter
+    steps:
+      - name: Check out source repository
+        uses: actions/checkout@v4
+      - name: Ruff format
+        uses: astral-sh/ruff-action@v3
+        with:
+         args: "format --check"
+  flake8-lint:
+    runs-on: ubuntu-latest
+    name: Flake8 linter
+    steps:
+      - name: Check out source repository
+        uses: actions/checkout@v4
+      - name: Set up Python environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: flake8 Lint
+        uses: py-actions/flake8@v2
+        with:
+          args: "--config .flake8"
+  mypy:
+    name: Mypy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source repository
+        uses: actions/checkout@v4
+#      - name: Export pyproject.toml to requirements.txt
+#        uses: divideprojects/poetry-export-requirements-action@v1
+#        with:
+#          without-hashes: true
+#          outfile-name: requirements.txt
+      - name: mypy lint
+        uses: jpetrucciani/mypy-check@master
+#        env:
+#          JWT_STRATEGY_SECRET: OSEF
+#          RESET_PASSWORD_TOKEN_SECRET: OSEF
+#          VERIFICATION_TOKEN_SECRET: OSEF
+        with:
+          mypy_flags: "--config-file mypy.ini"
+#          requirements_file: "requirements.txt"
