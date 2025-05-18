@@ -34,8 +34,8 @@ from backend.main import app, custom_exception_handler  # noqa Import after sett
 
 logger = logging.getLogger(APP_LOGGER_NAME)
 
-TEST_SQLALCHEMY_DATABASE_URL = "postgresql+asyncpg://dev:dev@project_base_postgres_test:5432/dev"
-factory_session = Session(create_engine("postgresql://dev:dev@project_base_postgres_test:5432/dev"))
+TEST_SQLALCHEMY_DATABASE_URL = "postgresql+asyncpg://dev:dev@localhost:5434/dev"
+factory_session = Session(create_engine("postgresql://dev:dev@localhost:5434/dev"))
 table_created = False
 
 

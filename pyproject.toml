@@ -25,7 +25,9 @@ beautifulsoup4 = "^4.12.3"
 lxml = "^5.2.2"
 asyncpg = "^0.30.0"
 alembic = "^1.14.0"
-psycopg2 = "^2.9.10"
+# psycopg2 = "^2.9.10"
+# temporary cause it's a pain to have pg_config in the nix environment
+psycopg2-binary = "^2.9.10"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.0.0"
@@ -58,6 +60,9 @@ addopts = "--import-mode=importlib"
 asyncio_mode = "auto"
 markers = [
     "anyio: Marks the test as using anyio",
+]
+pythonpath = [
+    "sources"
 ]
 
 [build-system]
