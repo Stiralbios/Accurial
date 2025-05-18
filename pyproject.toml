@@ -24,7 +24,7 @@ pycountry = "^24.6.1"
 beautifulsoup4 = "^4.12.3"
 lxml = "^5.2.2"
 asyncpg = "^0.30.0"
-alembic = "^1.14.0"
+alembic = "^1.15.2"
 # psycopg2 = "^2.9.10"
 # temporary cause it's a pain to have pg_config in the nix environment
 psycopg2-binary = "^2.9.10"
