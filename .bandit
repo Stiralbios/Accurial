@@ -1,0 +1,4 @@
+# Use .bandit file instead of pyproject.toml for the github action and cause targets don't work with pyproject.toml
+[bandit]
+targets = sources/backend
+exclude = tests
