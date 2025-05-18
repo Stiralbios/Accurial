@@ -16,6 +16,7 @@
             python312 /* 3.12.10 */
             poetry /* 2.1.3 */
             pre-commit /* 4.0.1 */
+            /* shouldn't put docker in this, use docker on your host os */
           ];
         };
       };
