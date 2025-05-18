@@ -1,5 +1,5 @@
 # DOCKER_BUILDKIT=1 docker build -t dev/project_base:latest -f Dockerfile.dev ..
-FROM python:3.12-bullseye
+FROM python:3.13-bullseye
 RUN apt-get update
 
 RUN curl -sSL https://install.python-poetry.org/ | python -
