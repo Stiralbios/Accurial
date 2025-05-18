@@ -1,0 +1,72 @@
+# docker compose -f docker-compose.dev.yml up
+services:
+
+  project_base_dev:
+    image: dev/project_base:latest
+    container_name: project_base_dev
+    restart: on-failure
+    ports:
+      - "8800:8000"
+    volumes:
+      - ../:/home/project_base/
+    environment:
+      - APP_ENVIRONMENT=DEV # DEV/TEST/PROD
+      - JWT_STRATEGY_SECRET=OSEF
+      - RESET_PASSWORD_TOKEN_SECRET=OSEF
+      - VERIFICATION_TOKEN_SECRET=OSEF
+      - PUSHER_APP_KEY=app-key
+      - PUSHER_APP_SECRET=app-secret
+      - PUSHER_APP_ID=42
+      - PUSHER_SSL=False
+      - LITELLM_PROXY_API_KEY=OSEF
+    command: ["bash", "./deployments/run_dev.sh"]
+    depends_on:
+      - project_base_postgres
+      - project_base_postgres_test
+    networks:
+      - backend
+
+  project_base_postgres:
+    image: postgres:17-alpine
+    container_name: project_base_postgres
+    restart: on-failure
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_DB: dev
+      POSTGRES_PASSWORD: dev
+    networks:
+      - backend
+
+  project_base_postgres_test:
+    image: postgres:17-alpine
+    container_name: project_base_postgres_test
+    restart: on-failure
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_DB: dev
+      POSTGRES_PASSWORD: dev
+    networks:
+      - backend
+
+  project_base_pgweb:
+    container_name: project_base_pgweb
+    restart: on-failure
+    image: sosedoff/pgweb
+    ports:
+      - "8081:8081"
+    links:
+      - project_base_postgres:postgres  # my database container is called postgres, not db
+    environment:
+      - PGWEB_DATABASE_URL=postgres://dev:dev@postgres:5432/dev?sslmode=disable
+    depends_on:
+      - project_base_postgres
+    networks:
+      - backend
+    command: /usr/bin/pgweb --bind=0.0.0.0 --listen=8081 --log-level=warn
+
+networks:
+  backend:

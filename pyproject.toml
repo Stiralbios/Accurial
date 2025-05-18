@@ -1,0 +1,66 @@
+[tool.poetry]
+name = "projectbase"
+version = "0.0.1"
+license = ""
+description = ""
+package-mode = false
+authors = ["Aurélien Vezin <aurelien.vezin.dev@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = {extras = ["standard"], version = "^0.115.2"}
+pendulum = "^3.0.0"
+SQLAlchemy = "^2.0.21"
+fastapi-users = {extras = ["sqlalchemy"], version = "^14.0.0"}
+pydantic = "^2.4.2"
+pydantic-settings = "^2.0.3"
+websockets = "^14.1"
+fastapi-filter = "^2.0.0"
+requests = "^2.31.0"
+uuid6 = "^2024.1.12"
+aiocache = "^0.12.2"
+pydantic-extra-types = "^2.8.0"
+pycountry = "^24.6.1"
+beautifulsoup4 = "^4.12.3"
+lxml = "^5.2.2"
+asyncpg = "^0.30.0"
+alembic = "^1.14.0"
+psycopg2 = "^2.9.10"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+coverage = {extras = ["toml"], version = "^7.3.1"}
+pytest-cov = "^6.0.0"
+pytest-mock = "^3.8.2"
+flake8 = "^7.0.0"
+bandit = "^1.7.4"
+mypy = "^1.6.1"
+pre-commit = "^4.0.1"
+pytest-asyncio = "^0.24.0"
+freezegun = "^1.5.1"
+factory-boy = "^3.3.1"
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint]
+extend-select = ["I"]
+
+[tool.coverage.report]
+fail_under = 5
+
+[tool.pytest.ini_options]
+addopts = "--import-mode=importlib"
+asyncio_mode = "auto"
+markers = [
+    "anyio: Marks the test as using anyio",
+]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
