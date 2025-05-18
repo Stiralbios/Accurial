@@ -13,4 +13,6 @@
 
 
 ## Todo
-- Fix nix issue (no pg_config installed)
+- Fix nix issue (no pg_config installed) => todo fix to be able to run the env without docker locally (for tests mostly) and have the venv elsewhere than there in the docker
+- Pin the version for the different libs in flake.nix
+- Check to have the same version of ruff everywhere
