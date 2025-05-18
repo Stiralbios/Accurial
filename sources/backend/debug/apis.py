@@ -8,7 +8,7 @@ router = APIRouter(prefix="/api/debug/healthcheck", tags=["debug", "healthcheck"
 @router.get("/status")
 async def get_status():
     return {
-        "status": 'ok',
+        "status": 'ok ',
         "stack": {
             "python": sys.version,
         },
