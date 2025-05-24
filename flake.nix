@@ -34,6 +34,7 @@
             pre-commit /* 4.0.1 */
             libgcc
             postgresql_17.pg_config
+            python312Packages.invoke
             /* shouldn't put docker in this, use docker on your host os */
           ];
         };
