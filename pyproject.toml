@@ -25,9 +25,7 @@ beautifulsoup4 = "^4.12.3"
 lxml = "^5.2.2"
 asyncpg = "^0.30.0"
 alembic = "^1.14.0"
-# psycopg2 = "^2.9.10"
-# temporary cause it's a pain to have pg_config in the nix environment
-psycopg2-binary = "^2.9.10"
+psycopg2 = "^2.9.10"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.0.0"
@@ -37,7 +35,6 @@ pytest-mock = "^3.8.2"
 flake8 = "^7.0.0"
 bandit = "^1.7.4"
 mypy = "^1.6.1"
-pre-commit = "^4.0.1"
 pytest-asyncio = "^0.24.0"
 freezegun = "^1.5.1"
 factory-boy = "^3.3.1"

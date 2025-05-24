@@ -33,7 +33,7 @@
             poetry /* 2.1.3 */
             pre-commit /* 4.0.1 */
             libgcc
-            postgresql_17
+            postgresql_17.pg_config
             /* shouldn't put docker in this, use docker on your host os */
           ];
         };
