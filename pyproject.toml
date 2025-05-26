@@ -14,7 +14,7 @@ SQLAlchemy = "^2.0.21"
 fastapi-users = {extras = ["sqlalchemy"], version = "^14.0.0"}
 pydantic = "^2.4.2"
 pydantic-settings = "^2.0.3"
-websockets = "^14.1"
+websockets = "^15.0"
 fastapi-filter = "^2.0.0"
 requests = "^2.31.0"
 uuid6 = "^2024.1.12"
