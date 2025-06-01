@@ -35,6 +35,7 @@
             libgcc
             postgresql_17.pg_config
             python312Packages.invoke
+            nodejs
             /* shouldn't put docker in this, use docker on your host os */
           ];
         };
