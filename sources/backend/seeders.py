@@ -1,4 +1,3 @@
-
 import logging
 
 from fastapi_users import exceptions
