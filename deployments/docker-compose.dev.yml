@@ -14,11 +14,8 @@ services:
       - JWT_STRATEGY_SECRET=OSEF
       - RESET_PASSWORD_TOKEN_SECRET=OSEF
       - VERIFICATION_TOKEN_SECRET=OSEF
-      - PUSHER_APP_KEY=app-key
-      - PUSHER_APP_SECRET=app-secret
-      - PUSHER_APP_ID=42
-      - PUSHER_SSL=False
-      - LITELLM_PROXY_API_KEY=OSEF
+      - DEFAULT_EMAIL=test@test.lan
+      - DEFAULT_PASSWORD=devpassword123
       - PYTHONDONTWRITEBYTECODE=1
     command: ["bash", "./deployments/run_dev.sh"]
     depends_on:

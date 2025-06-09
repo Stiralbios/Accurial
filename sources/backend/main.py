@@ -10,11 +10,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.database import create_db_and_tables
 from backend.debug import apis as healthcheck
 from backend.logconfig import APP_LOGGER_NAME, LogConfig
-from backend.settings import Settings
+from backend.seeders import create_default_superuser
+from backend.settings import AppSettings
 from backend.user import apis as user
 
 # init settings config
-settings = Settings()
+settings = AppSettings()
 
 
 def custom_exception_handler(loop, context):
@@ -33,10 +34,7 @@ def custom_exception_handler(loop, context):
 async def lifespan(app: FastAPI):
     # Startup: Initialize DB and set exception handler
     await create_db_and_tables()
-    # if settings.APP_ENVIRONMENT == "DEV":
-    #     from backend.database_seeders import seed_database
-    #
-    #     await seed_database()
+    await create_default_superuser()
     loop = asyncio.get_running_loop()
     loop.set_exception_handler(custom_exception_handler)
 

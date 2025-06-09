@@ -1,7 +1,7 @@
 import uuid
 from typing import Optional
 
-from backend.settings import Settings
+from backend.settings import AppSettings
 from backend.user.models import User, get_user_db
 from backend.user.schemas import UserCreate
 from fastapi import Depends, Request
@@ -9,8 +9,8 @@ from fastapi_users import BaseUserManager, InvalidPasswordException, UUIDIDMixin
 
 
 class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
-    reset_password_token_secret = Settings().RESET_PASSWORD_TOKEN_SECRET
-    verification_token_secret = Settings().VERIFICATION_TOKEN_SECRET
+    reset_password_token_secret = AppSettings().RESET_PASSWORD_TOKEN_SECRET
+    verification_token_secret = AppSettings().VERIFICATION_TOKEN_SECRET
 
     async def on_after_register(self, user: User, request: Optional[Request] = None):
         """
@@ -42,4 +42,4 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
 
 
 async def get_user_manager(user_db=Depends(get_user_db)):
-    yield UserManager(user_db)
+    return UserManager(user_db)

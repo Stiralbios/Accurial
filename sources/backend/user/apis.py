@@ -12,27 +12,26 @@ fastapi_users = FastAPIUsers[User, uuid.UUID](
     [jwt_auth_backend],
 )
 
+router = APIRouter(prefix="")
 
-router = APIRouter(prefix="/api/user")
-
-router.include_router(fastapi_users.get_auth_router(jwt_auth_backend), prefix="/auth/jwt", tags=["auth"])
+router.include_router(fastapi_users.get_auth_router(jwt_auth_backend), prefix="/api/auth/jwt", tags=["auth"])
 router.include_router(
     fastapi_users.get_register_router(UserRead, UserCreate),
-    prefix="/auth",
-    tags=["auth"],
+    prefix="/api/user",
+    tags=["user"],
 )
 router.include_router(
     fastapi_users.get_reset_password_router(),
-    prefix="/auth",
-    tags=["auth"],
+    prefix="/api/user",
+    tags=["user"],
 )
 router.include_router(
     fastapi_users.get_verify_router(UserRead),
-    prefix="/auth",
-    tags=["auth"],
+    prefix="/api/user",
+    tags=["user"],
 )
 router.include_router(
     fastapi_users.get_users_router(UserRead, UserUpdate),
-    prefix="/users",
-    tags=["users"],
+    prefix="/api/user",
+    tags=["user"],
 )
