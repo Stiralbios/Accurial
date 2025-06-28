@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.database import create_db_and_tables
 from backend.debug import apis as healthcheck
 from backend.logconfig import APP_LOGGER_NAME, LogConfig
+from backend.question import apis as question
 from backend.seeders import create_default_superuser
 from backend.settings import AppSettings
 from backend.user import apis as user
@@ -51,6 +52,7 @@ dictConfig(LogConfig(LOG_LEVEL=settings.LOG_LEVEL).model_dump())
 # Including routers
 app.include_router(healthcheck.router)
 app.include_router(user.router)
+app.include_router(question.router)
 
 
 # frontend port connection
