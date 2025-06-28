@@ -10,9 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 class QuestionBase(BaseModel):
     title: str = Field(max_length=255, examples=["My great question"])
     description: str = Field(
-        examples=[
-            "What will my familly cook for chrismass ?"
-        ],
+        examples=["What will my familly cook for chrismass ?"],
     )
     prediction_type: PredictionType
 
@@ -37,7 +35,7 @@ class QuestionCreateInternal(QuestionCreate):
     status: QuestionStatus = Field(default=QuestionStatus.DRAFT)
 
 
-class QuestionUpdate(QuestionBase):
+class QuestionUpdate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     title: Optional[str] = Field(default=None)
