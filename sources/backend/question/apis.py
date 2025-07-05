@@ -1,6 +1,6 @@
 import uuid
 
-from backend.exceptions import CustomNotFoundError
+from backend.exceptions import CustomNotAllowedError, CustomNotFoundError
 from backend.question.managers import QuestionManager
 from backend.question.schemas import (
     QuestionCreate,
@@ -46,6 +46,8 @@ async def update_question(
 ) -> QuestionRead:
     question_internal = QuestionUpdateInternal(id=question_id, **question.model_dump(exclude_unset=True))
     try:
-        return await QuestionManager.update(question_internal)
+        return await QuestionManager.update(question_internal, user)
     except CustomNotFoundError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message) from e
+    except CustomNotAllowedError as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=e.message) from e

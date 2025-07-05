@@ -1,6 +1,7 @@
 import uuid
 
 from backend.database import with_async_session
+from backend.exceptions import InvariantViolation
 from backend.question.models import QuestionDO
 from backend.question.schemas import QuestionCreateInternal, QuestionFilter, QuestionInternal, QuestionUpdateInternal
 from sqlalchemy import select
@@ -27,7 +28,7 @@ class QuestionStore:
     async def update(session: AsyncSession, question_update: QuestionUpdateInternal) -> QuestionInternal:
         orm_object = await session.get(QuestionDO, question_update.id)
         if not orm_object:
-            raise RuntimeError("tmp exception to change")
+            raise InvariantViolation(f"Unexpected missing QuestionDO for {question_update.id=}")
         for field, value in question_update.model_dump(exclude_unset=True, exclude={"id"}).items():
             setattr(orm_object, field, value)
         await session.commit()

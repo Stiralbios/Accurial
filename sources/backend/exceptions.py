@@ -9,5 +9,13 @@ class CustomNotFoundError(CustomError):
     pass
 
 
+class CustomNotAllowedError(CustomError):
+    pass
+
+
 class CustomAlreadyExistError(CustomError):
+    pass
+
+
+class InvariantViolation(RuntimeError):
     pass
