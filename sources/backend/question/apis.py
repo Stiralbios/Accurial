@@ -35,14 +35,15 @@ async def retrieve_question(question_id: uuid.UUID, user: User = Depends(current
 
 @router.get(path="/", response_model=list[QuestionRead])
 async def list_question(
-    question_filter: QuestionFilter = FilterDepends(QuestionFilter),
-    user: User = Depends(current_active_user)
+    question_filter: QuestionFilter = FilterDepends(QuestionFilter), user: User = Depends(current_active_user)
 ) -> list[QuestionRead]:
     return await QuestionManager.list(question_filter)
 
 
 @router.patch(path="/{question_id}", response_model=QuestionRead)
-async def update_question(question_id: uuid.UUID, question: QuestionUpdate, user: User = Depends(current_active_user)) -> QuestionRead:
+async def update_question(
+    question_id: uuid.UUID, question: QuestionUpdate, user: User = Depends(current_active_user)
+) -> QuestionRead:
     question_internal = QuestionUpdateInternal(id=question_id, **question.model_dump(exclude_unset=True))
     try:
         return await QuestionManager.update(question_internal)
