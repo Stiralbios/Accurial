@@ -26,10 +26,10 @@ class QuestionStore:
     @staticmethod
     @with_async_session
     async def update(session: AsyncSession, question_update: QuestionUpdateInternal) -> QuestionInternal:
-        orm_object = await session.get(QuestionDO, question_update.id)
+        orm_object = await session.get(QuestionDO, question_update.context.id)
         if not orm_object:
             raise InvariantViolation(f"Unexpected missing QuestionDO for {question_update.id=}")
-        for field, value in question_update.model_dump(exclude_unset=True, exclude={"id"}).items():
+        for field, value in question_update.model_dump(exclude_unset=True, exclude={"context"}).items():
             setattr(orm_object, field, value)
         await session.commit()
         return QuestionInternal.model_validate(orm_object)

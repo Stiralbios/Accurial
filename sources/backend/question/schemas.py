@@ -45,8 +45,13 @@ class QuestionUpdate(BaseModel):
     status: Optional[QuestionStatus] = Field(default=None)
 
 
-class QuestionUpdateInternal(QuestionUpdate):
+class QuestionUpdateContext(BaseModel):
     id: uuid.UUID
+    user_id: uuid.UUID
+
+
+class QuestionUpdateInternal(QuestionUpdate):
+    context: QuestionUpdateContext
 
 
 class QuestionFilter(Filter):

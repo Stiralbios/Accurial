@@ -3,7 +3,6 @@ import uuid
 from backend.exceptions import CustomNotAllowedError, CustomNotFoundError
 from backend.question.schemas import QuestionCreateInternal, QuestionFilter, QuestionInternal, QuestionUpdateInternal
 from backend.question.stores import QuestionStore
-from backend.user.schemas import UserInternal
 
 
 class QuestionManager:
@@ -25,13 +24,13 @@ class QuestionManager:
         return await QuestionStore.list(question_filter)
 
     @staticmethod
-    async def update(question: QuestionUpdateInternal, user: UserInternal) -> QuestionInternal:
-        question_retrived = await QuestionStore.retrieve(question.id)
+    async def update(question: QuestionUpdateInternal) -> QuestionInternal:
+        question_retrived = await QuestionStore.retrieve(question.context.id)
         if not question_retrived:
-            raise CustomNotFoundError(f"Question {question.id} not found")
-        elif user.id != question_retrived.owner_id:
+            raise CustomNotFoundError(f"Question {question.context.id} not found")
+        elif question.context.user_id != question_retrived.owner_id:
             raise CustomNotAllowedError(
-                f"User {user.id} is not allowed to update question {question.id}. "
+                f"User {question.context.user_id.id} is not allowed to update question {question.context.id}. "
                 f"Owner id: {question_retrived.owner_id}"
             )
 

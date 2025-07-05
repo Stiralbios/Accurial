@@ -8,6 +8,7 @@ from backend.question.schemas import (
     QuestionFilter,
     QuestionRead,
     QuestionUpdate,
+    QuestionUpdateContext,
     QuestionUpdateInternal,
 )
 from backend.user.auth import current_active_user
@@ -44,9 +45,13 @@ async def list_question(
 async def update_question(
     question_id: uuid.UUID, question: QuestionUpdate, user: UserInternal = Depends(current_active_user)
 ) -> QuestionRead:
-    question_internal = QuestionUpdateInternal(id=question_id, **question.model_dump(exclude_unset=True))
+    context = QuestionUpdateContext(
+        id=question_id,
+        user_id=user.id,
+    )
+    question_internal = QuestionUpdateInternal(context=context, **question.model_dump(exclude_unset=True))
     try:
-        return await QuestionManager.update(question_internal, user)
+        return await QuestionManager.update(question_internal)
     except CustomNotFoundError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message) from e
     except CustomNotAllowedError as e:
