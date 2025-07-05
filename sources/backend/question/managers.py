@@ -10,12 +10,12 @@ class QuestionManager:
     async def retrieve(question_uuid: uuid.UUID) -> QuestionInternal:
         question = await QuestionStore.retrieve(question_uuid)
         if question is None:
-            raise CustomNotFoundError(f"Page {question_uuid} not found")
+            raise CustomNotFoundError(f"Question {question_uuid} not found")
         return question
 
     @staticmethod
-    async def create(page: QuestionCreateInternal) -> QuestionInternal:
-        return await QuestionStore.create(page)
+    async def create(question: QuestionCreateInternal) -> QuestionInternal:
+        return await QuestionStore.create(question)
 
     @staticmethod
     async def list(

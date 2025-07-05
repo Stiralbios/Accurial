@@ -5,10 +5,11 @@ from fastapi_users_db_sqlalchemy import (
     SQLAlchemyUserDatabase,
 )
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import relationship
 
 
 class User(SQLAlchemyBaseUserTableUUID, Base):
-    pass
+    questions = relationship("QuestionDO", back_populates="owner")
 
 
 async def get_user_db(session: AsyncSession = Depends(get_async_session)):

@@ -20,6 +20,7 @@ class QuestionRead(QuestionBase):
 
     id: uuid.UUID
     status: QuestionStatus
+    owner_id: uuid.UUID
 
 
 class QuestionInternal(QuestionRead):
@@ -32,6 +33,7 @@ class QuestionCreate(QuestionBase):
 
 class QuestionCreateInternal(QuestionCreate):
     status: QuestionStatus = Field(default=QuestionStatus.DRAFT)
+    owner_id: uuid.UUID = Field(default=None)
 
 
 class QuestionUpdate(BaseModel):
