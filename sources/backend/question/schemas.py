@@ -15,7 +15,6 @@ class QuestionBase(BaseModel):
     prediction_type: PredictionType
 
 
-# todo add user
 class QuestionRead(QuestionBase):
     model_config = ConfigDict(from_attributes=True)
 

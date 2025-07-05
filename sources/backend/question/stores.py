@@ -27,7 +27,7 @@ class QuestionStore:
     async def update(session: AsyncSession, question_update: QuestionUpdateInternal) -> QuestionInternal:
         orm_object = await session.get(QuestionDO, question_update.id)
         if not orm_object:
-            raise RuntimeError("tmp exception to change")  # todo change
+            raise RuntimeError("tmp exception to change")
         for field, value in question_update.model_dump(exclude_unset=True, exclude={"id"}).items():
             setattr(orm_object, field, value)
         await session.commit()
@@ -36,7 +36,6 @@ class QuestionStore:
     @staticmethod
     @with_async_session
     async def list(session: AsyncSession, question_filter: QuestionFilter) -> list[QuestionInternal]:
-        # todo maybe fork the filter to be able to paginate
         query = question_filter.filter(select(QuestionDO))
         res = await session.execute(query)
         orm_objects = res.scalars().all()

@@ -10,7 +10,7 @@ class QuestionManager:
     async def retrieve(question_uuid: uuid.UUID) -> QuestionInternal:
         question = await QuestionStore.retrieve(question_uuid)
         if question is None:
-            raise CustomNotFoundError(f"Page {question_uuid} not found")  # todo add a sensible business error
+            raise CustomNotFoundError(f"Page {question_uuid} not found")
         return question
 
     @staticmethod
@@ -27,5 +27,5 @@ class QuestionManager:
     async def update(question: QuestionUpdateInternal) -> QuestionInternal:
         try:
             return await QuestionStore.update(question)
-        except RuntimeError:  # todo change the error
-            raise CustomNotFoundError(f"Question {question.id} not found")  # todo add a sensible business error
+        except RuntimeError:
+            raise CustomNotFoundError(f"Question {question.id} not found")

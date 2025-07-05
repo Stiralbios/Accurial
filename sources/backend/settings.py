@@ -14,8 +14,8 @@ class AppSettings(BaseSettings):
     POSTGRES_HOST: str = "project_base_postgres"
     POSTGRES_PORT: int = 5432
     POSTGRES_USER: str = "dev"
-    POSTGRES_PASSWORD: SecretStr = "dev"  # todo use SecretStr
-    POSTGRES_DB: str = "dev"  # todo use SercretStr
+    POSTGRES_PASSWORD: SecretStr = "dev"
+    POSTGRES_DB: str = "dev"
 
 
 class InitializationSettings(BaseSettings):
