@@ -14,7 +14,8 @@ class QuestionStore:
     async def create(session: AsyncSession, question: QuestionCreateInternal) -> QuestionInternal:
         orm_object = QuestionDO(**question.model_dump())
         session.add(orm_object)
-        await session.commit()
+        await session.flush()
+        await session.refresh(orm_object)
         return QuestionInternal.model_validate(orm_object)
 
     @staticmethod
@@ -28,10 +29,11 @@ class QuestionStore:
     async def update(session: AsyncSession, question_update: QuestionUpdateInternal) -> QuestionInternal:
         orm_object = await session.get(QuestionDO, question_update.context.id)
         if not orm_object:
-            raise InvariantViolation(f"Unexpected missing QuestionDO for {question_update.id=}")
+            raise InvariantViolation(f"QuestionDO with ID {question_update.context.id} does not exist.")
         for field, value in question_update.model_dump(exclude_unset=True, exclude={"context"}).items():
             setattr(orm_object, field, value)
-        await session.commit()
+        await session.flush()
+        await session.refresh(orm_object)
         return QuestionInternal.model_validate(orm_object)
 
     @staticmethod

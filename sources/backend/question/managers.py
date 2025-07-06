@@ -6,32 +6,31 @@ from backend.question.stores import QuestionStore
 
 
 class QuestionManager:
-    @staticmethod
-    async def retrieve(question_uuid: uuid.UUID) -> QuestionInternal:
-        question = await QuestionStore.retrieve(question_uuid)
+    def __init__(self, store: QuestionStore = QuestionStore) -> None:
+        self.store = store
+
+    async def retrieve(self, question_uuid: uuid.UUID) -> QuestionInternal:
+        question = await self.store.retrieve(question_uuid)
         if question is None:
             raise CustomNotFoundError(f"Question {question_uuid} not found")
         return question
 
-    @staticmethod
-    async def create(question: QuestionCreateInternal) -> QuestionInternal:
-        return await QuestionStore.create(question)
+    async def create(self, question: QuestionCreateInternal) -> QuestionInternal:
+        return await self.store.create(question)
 
-    @staticmethod
     async def list(
+        self,
         question_filter: QuestionFilter,
     ) -> list[QuestionInternal]:
-        return await QuestionStore.list(question_filter)
+        return await self.store.list(question_filter)
 
-    @staticmethod
-    async def update(question: QuestionUpdateInternal) -> QuestionInternal:
-        question_retrived = await QuestionStore.retrieve(question.context.id)
-        if not question_retrived:
+    async def update(self, question: QuestionUpdateInternal) -> QuestionInternal:
+        question_retrieved = await self.store.retrieve(question.context.id)
+        if not question_retrieved:
             raise CustomNotFoundError(f"Question {question.context.id} not found")
-        elif question.context.user_id != question_retrived.owner_id:
+        elif question.context.user_id != question_retrieved.owner_id:
             raise CustomNotAllowedError(
-                f"User {question.context.user_id.id} is not allowed to update question {question.context.id}. "
-                f"Owner id: {question_retrived.owner_id}"
+                f"User {question.context.user_id} is not allowed to update question {question.context.id}."
             )
 
-        return await QuestionStore.update(question)
+        return await self.store.update(question)

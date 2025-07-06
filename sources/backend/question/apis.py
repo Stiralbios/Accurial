@@ -23,13 +23,13 @@ router = APIRouter(prefix="/api/question", tags=["question"])
 @router.post("", response_model=QuestionRead)
 async def create_question(question: QuestionCreate, user: UserInternal = Depends(current_active_user)) -> QuestionRead:
     question_internal = QuestionCreateInternal(**question.model_dump(exclude_unset=True), owner_id=user.id)
-    return await QuestionManager.create(question_internal)
+    return await QuestionManager().create(question_internal)
 
 
 @router.get(path="/{question_id}", response_model=QuestionRead)
 async def retrieve_question(question_id: uuid.UUID, user: UserInternal = Depends(current_active_user)) -> QuestionRead:
     try:
-        return await QuestionManager.retrieve(question_id)
+        return await QuestionManager().retrieve(question_id)
     except CustomNotFoundError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message) from e
 
@@ -38,7 +38,7 @@ async def retrieve_question(question_id: uuid.UUID, user: UserInternal = Depends
 async def list_question(
     question_filter: QuestionFilter = FilterDepends(QuestionFilter), user: UserInternal = Depends(current_active_user)
 ) -> list[QuestionRead]:
-    return await QuestionManager.list(question_filter)
+    return await QuestionManager().list(question_filter)
 
 
 @router.patch(path="/{question_id}", response_model=QuestionRead)
@@ -51,7 +51,7 @@ async def update_question(
     )
     question_internal = QuestionUpdateInternal(context=context, **question.model_dump(exclude_unset=True))
     try:
-        return await QuestionManager.update(question_internal)
+        return await QuestionManager().update(question_internal)
     except CustomNotFoundError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message) from e
     except CustomNotAllowedError as e:
