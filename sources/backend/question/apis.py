@@ -13,7 +13,7 @@ from backend.question.schemas import (
 )
 from backend.user.auth import current_active_user
 from backend.user.schemas import UserInternal
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from fastapi_filter import FilterDepends
 from starlette import status
 
@@ -52,6 +52,17 @@ async def update_question(
     question_internal = QuestionUpdateInternal(context=context, **question.model_dump(exclude_unset=True))
     try:
         return await QuestionManager().update(question_internal)
+    except CustomNotFoundError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message) from e
+    except CustomNotAllowedError as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=e.message) from e
+
+
+@router.delete(path="/{question_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_question(question_id: uuid.UUID, user: UserInternal = Depends(current_active_user)):
+    try:
+        await QuestionManager().delete(question_id)
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
     except CustomNotFoundError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message) from e
     except CustomNotAllowedError as e:

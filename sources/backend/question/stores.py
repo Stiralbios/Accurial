@@ -1,3 +1,4 @@
+import logging
 import uuid
 
 from backend.database import with_async_session
@@ -6,6 +7,9 @@ from backend.question.models import QuestionDO
 from backend.question.schemas import QuestionCreateInternal, QuestionFilter, QuestionInternal, QuestionUpdateInternal
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+logging.basicConfig()
+logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
 
 
 class QuestionStore:
@@ -43,3 +47,12 @@ class QuestionStore:
         res = await session.execute(query)
         orm_objects = res.scalars().all()
         return [QuestionInternal.model_validate(orm_object) for orm_object in orm_objects]
+
+    @staticmethod
+    @with_async_session
+    async def delete(session: AsyncSession, question_uuid: uuid.UUID) -> None:
+        orm_object = await session.get(QuestionDO, question_uuid)
+        if orm_object is None:
+            raise InvariantViolation(f"QuestionDO with ID {question_uuid} does not exist.")
+        await session.delete(orm_object)
+        await session.flush()

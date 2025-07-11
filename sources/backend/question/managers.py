@@ -1,6 +1,7 @@
 import uuid
 
 from backend.exceptions import CustomNotAllowedError, CustomNotFoundError
+from backend.question.constants import QuestionStatus
 from backend.question.schemas import QuestionCreateInternal, QuestionFilter, QuestionInternal, QuestionUpdateInternal
 from backend.question.stores import QuestionStore
 
@@ -34,3 +35,12 @@ class QuestionManager:
             )
 
         return await self.store.update(question)
+
+    async def delete(self, question_uuid: uuid.UUID) -> None:
+        question = await self.store.retrieve(question_uuid)
+        if question is None:
+            raise CustomNotFoundError(f"Question {question_uuid} not found")
+        if question.status != QuestionStatus.DRAFT:
+            raise CustomNotAllowedError(f"Question {question_uuid} isn't in draft, you should archive it")
+        await self.store.delete(question_uuid)
+        return None
