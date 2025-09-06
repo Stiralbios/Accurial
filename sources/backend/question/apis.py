@@ -52,11 +52,8 @@ async def update_question(
         user_id=user.id,
     )
     question_internal = QuestionUpdateInternal.model_validate(
-            {
-                **question.model_dump(exclude_unset=True),
-                "context": context
-            }
-        )
+        {**question.model_dump(exclude_unset=True), "context": context}
+    )
     try:
         return await QuestionService().update(question_internal)
     except CustomNotFoundError as e:

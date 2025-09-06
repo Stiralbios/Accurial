@@ -51,8 +51,7 @@ class QuestionUpdate(BaseModel):
     prediction_type: Optional[PredictionType] = Field(default=None)
     status: Optional[QuestionStatus] = Field(default=None)
 
-
-    @classmethod # noqa
+    @classmethod  # noqa
     @field_validator("title", "description", "prediction_type", "status", mode="before")
     def prevent_explicit_none(cls, value: Any) -> Any:
         if value is None:

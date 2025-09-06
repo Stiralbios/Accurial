@@ -1,9 +1,9 @@
 from uuid import UUID
 
 from backend.user.authentification_backends import jwt_auth_backend
-from backend.user.services import get_user_service
 from backend.user.models import User
 from backend.user.schemas import UserInternal
+from backend.user.services import get_user_service
 from fastapi import Security
 from fastapi_users import FastAPIUsers
 
