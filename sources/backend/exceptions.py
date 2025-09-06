@@ -15,7 +15,3 @@ class CustomNotAllowedError(CustomError):
 
 class CustomAlreadyExistError(CustomError):
     pass
-
-
-class InvariantViolation(RuntimeError):
-    pass

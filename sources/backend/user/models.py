@@ -1,4 +1,6 @@
-from backend.database import Base, get_async_session
+from typing import AsyncGenerator
+
+from backend.database import Base, async_session_maker
 from fastapi import Depends
 from fastapi_users_db_sqlalchemy import (
     SQLAlchemyBaseUserTableUUID,
@@ -6,6 +8,11 @@ from fastapi_users_db_sqlalchemy import (
 )
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import relationship
+
+
+async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
+    async with async_session_maker() as session:
+        yield session
 
 
 class User(SQLAlchemyBaseUserTableUUID, Base):

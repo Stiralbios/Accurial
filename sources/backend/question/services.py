@@ -6,7 +6,7 @@ from backend.question.schemas import QuestionCreateInternal, QuestionFilter, Que
 from backend.question.stores import QuestionStore
 
 
-class QuestionManager:
+class QuestionService:
     def __init__(self, store: QuestionStore = QuestionStore) -> None:
         self.store = store
 
@@ -27,20 +27,15 @@ class QuestionManager:
 
     async def update(self, question: QuestionUpdateInternal) -> QuestionInternal:
         question_retrieved = await self.store.retrieve(question.context.id)
-        if not question_retrieved:
-            raise CustomNotFoundError(f"Question {question.context.id} not found")
-        elif question.context.user_id != question_retrieved.owner_id:
+        if question_retrieved and question.context.user_id != question_retrieved.owner_id:
             raise CustomNotAllowedError(
                 f"User {question.context.user_id} is not allowed to update question {question.context.id}."
             )
-
         return await self.store.update(question)
 
     async def delete(self, question_uuid: uuid.UUID) -> None:
         question = await self.store.retrieve(question_uuid)
-        if question is None:
-            raise CustomNotFoundError(f"Question {question_uuid} not found")
-        if question.status != QuestionStatus.DRAFT:
+        if question and question.status != QuestionStatus.DRAFT:
             raise CustomNotAllowedError(f"Question {question_uuid} isn't in draft, you should archive it")
         await self.store.delete(question_uuid)
         return None

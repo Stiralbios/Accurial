@@ -1,10 +1,10 @@
 import uuid
-from typing import Optional
+from typing import Any, Optional
 
 from backend.question.constants import PredictionType, QuestionStatus
 from backend.question.models import QuestionDO
 from fastapi_filter.contrib.sqlalchemy import Filter
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class QuestionBase(BaseModel):
@@ -35,6 +35,13 @@ class QuestionCreateInternal(QuestionCreate):
     status: QuestionStatus = Field(default=QuestionStatus.DRAFT)
     owner_id: uuid.UUID = Field(default=None)
 
+    # @model_validator(mode="before")
+    # @classmethod
+    # def transform(cls, data: Any) -> dict | Any:
+    #     if isinstance(data, QuestionCreate):
+    #         return {**data.model_dump(exclude={"password_plain_text"}, exclude_unset=True)}
+    #     return data
+
 
 class QuestionUpdate(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -43,6 +50,14 @@ class QuestionUpdate(BaseModel):
     description: Optional[str] = Field(default=None)
     prediction_type: Optional[PredictionType] = Field(default=None)
     status: Optional[QuestionStatus] = Field(default=None)
+
+
+    @classmethod # noqa
+    @field_validator("title", "description", "prediction_type", "status", mode="before")
+    def prevent_explicit_none(cls, value: Any) -> Any:
+        if value is None:
+            raise ValueError("Explicit None is not allowed for this field")
+        return value
 
 
 class QuestionUpdateContext(BaseModel):
@@ -55,8 +70,8 @@ class QuestionUpdateInternal(QuestionUpdate):
 
 
 class QuestionFilter(Filter):
-    status: QuestionStatus
-    prediction_type: PredictionType
+    status: Optional[QuestionStatus] = Field(default=None)
+    prediction_type: Optional[PredictionType] = Field(default=None)
 
     class Constants(Filter.Constants):
         model = QuestionDO

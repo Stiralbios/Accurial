@@ -1,10 +1,8 @@
 from pydantic import BaseModel
 
-APP_LOGGER_NAME: str = "project_base"
-
 
 class LogConfig(BaseModel):
-    LOGGER_NAME: str = APP_LOGGER_NAME
+    LOGGER_NAME: str = "accurial"
     LOG_FORMAT: str = "%(levelprefix)s %(message)s"
     LOG_LEVEL: str = "DEBUG"
 
@@ -36,7 +34,7 @@ class LogConfig(BaseModel):
         },
     }
     loggers: dict = {
-        "project_base": {"handlers": ["default"], "level": LOG_LEVEL},
+        "accurial": {"handlers": ["default"], "level": LOG_LEVEL},
         "uvicorn": {"handlers": ["default"], "level": "INFO"},
         "uvicorn.error": {"level": "INFO", "handlers": ["default"], "propagate": True},
         "uvicorn.access": {"handlers": ["access"], "level": "INFO", "propagate": True},

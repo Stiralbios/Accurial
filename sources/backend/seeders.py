@@ -3,13 +3,12 @@ import logging
 from fastapi_users import exceptions
 
 from backend.database import async_session_maker
-from backend.logconfig import APP_LOGGER_NAME
 from backend.settings import InitializationSettings
-from backend.user.managers import UserManager
 from backend.user.models import get_user_db
 from backend.user.schemas import UserCreate
+from backend.user.services import UserService
 
-logger = logging.getLogger(APP_LOGGER_NAME)
+logger = logging.getLogger(__name__)
 
 
 async def create_default_superuser():
@@ -25,7 +24,7 @@ async def create_default_superuser():
 
     async with async_session_maker() as session:
         user_db = await get_user_db(session=session)
-        user_manager = UserManager(user_db)
+        user_manager = UserService(user_db)
 
         try:
             user = await user_manager.get_by_email(email)

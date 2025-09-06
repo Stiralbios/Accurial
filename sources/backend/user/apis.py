@@ -1,14 +1,14 @@
 import uuid
 
 from backend.user.authentification_backends import jwt_auth_backend
-from backend.user.managers import get_user_manager
 from backend.user.models import User
 from backend.user.schemas import UserCreate, UserRead, UserUpdate
+from backend.user.services import get_user_service
 from fastapi import APIRouter
 from fastapi_users import FastAPIUsers
 
 fastapi_users = FastAPIUsers[User, uuid.UUID](
-    get_user_manager,
+    get_user_service,
     [jwt_auth_backend],
 )
 

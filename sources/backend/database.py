@@ -1,11 +1,11 @@
 import logging
+from contextlib import asynccontextmanager
 from functools import wraps
-from typing import Any, AsyncGenerator, Callable
+from typing import Any, AsyncGenerator, Callable, Coroutine
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
-from backend.logconfig import APP_LOGGER_NAME
 from backend.settings import AppSettings
 
 # init settings config
@@ -19,7 +19,7 @@ SQLALCHEMY_DATABASE_URL = (
 engine = create_async_engine(SQLALCHEMY_DATABASE_URL)
 
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
-logger = logging.getLogger(APP_LOGGER_NAME)
+logger = logging.getLogger(__name__)
 
 
 class Base(DeclarativeBase):
@@ -36,17 +36,25 @@ async def create_db_and_tables():
             logger.info(f"Error creating tables: {e}")
 
 
+@asynccontextmanager
 async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
     async with async_session_maker() as session:
-        yield session
+        async with session.begin():
+            yield session
 
 
-def with_async_session(func: Callable) -> Callable:
+def with_async_session(func: Callable) -> Callable[..., Coroutine[Any, Any, Any]]:
     @wraps(func)
     async def wrapper(*args, **kwargs) -> Any:
-        async for session in get_async_session():
-            async with session.begin():
-                result = await func(session, *args, **kwargs)
-        return result
+        # Check for existing session in arguments
+        session = next((arg for arg in args if isinstance(arg, AsyncSession)), kwargs.get("session"))
+
+        if session and isinstance(session, AsyncSession):
+            # Use existing session without transaction management
+            return await func(*args, **kwargs)
+        # Create new session and manage transaction
+
+        async with get_async_session() as session:
+            return await func(session, *args, **kwargs)
 
     return wrapper

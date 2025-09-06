@@ -8,7 +8,7 @@ from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, InvalidPasswordException, UUIDIDMixin
 
 
-class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
+class UserService(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
     reset_password_token_secret = AppSettings().RESET_PASSWORD_TOKEN_SECRET
     verification_token_secret = AppSettings().VERIFICATION_TOKEN_SECRET
 
@@ -41,5 +41,5 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
             raise InvalidPasswordException(reason="Password should not contain e-mail")
 
 
-async def get_user_manager(user_db=Depends(get_user_db)):
-    return UserManager(user_db)
+async def get_user_service(user_db=Depends(get_user_db)):
+    return UserService(user_db)
