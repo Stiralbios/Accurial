@@ -17,7 +17,7 @@ from sqlalchemy.orm import Session
 
 ##########################################################
 # CONFIGURE THE PYTHONPATH                               #
-##########################################################
+###############W###########################################
 
 # Add the source root to sys.path if it's not already included
 # todo do the config in the yaml cause here it's hardcoded and will be working only for the docker
@@ -94,7 +94,8 @@ async def create_user():
     async with async_session_maker() as session:
         user_db = await get_user_db(session)
         user_service = UserService(user_db)
-        user = await user_service.create(UserCreate(
+        user = await user_service.create(
+            UserCreate(
                 email="admin@example.com",
                 password="qud!zz*$pmf34V!8xrT%",
                 is_superuser=True,

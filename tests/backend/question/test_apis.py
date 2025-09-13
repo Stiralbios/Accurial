@@ -10,7 +10,7 @@ import pytest
             {
                 "title": "My great question",
                 "description": "What will my familly cook for chrismass ?",
-                "prediction_type": "binary"
+                "prediction_type": "binary",
             },
             id="default",
         )
