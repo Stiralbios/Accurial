@@ -17,7 +17,7 @@ from sqlalchemy.orm import Session
 
 ##########################################################
 # CONFIGURE THE PYTHONPATH                               #
-###############W##########################################
+##########################################################
 
 # Add the source root to sys.path if it's not already included
 # todo do the config in the yaml cause here it's hardcoded and will be working only for the docker
