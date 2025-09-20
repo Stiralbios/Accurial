@@ -1,45 +1,33 @@
-import uuid
-from typing import Optional
+from backend.exceptions import CustomNotFoundError
+from backend.user.schemas import UserCreateInternal, UserFilter, UserInternal
+from backend.user.stores import UserStore
+from pydantic import UUID4, SecretStr
 
-from backend.settings import AppSettings
-from backend.user.models import User, get_user_db
-from backend.user.schemas import UserCreate
-from fastapi import Depends, Request
-from fastapi_users import BaseUserManager, InvalidPasswordException, UUIDIDMixin
+from backend.utils.passwords import verify_password
 
 
-class UserService(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
-    reset_password_token_secret = AppSettings().RESET_PASSWORD_TOKEN_SECRET
-    verification_token_secret = AppSettings().VERIFICATION_TOKEN_SECRET
+class UserService:
 
-    async def on_after_register(self, user: User, request: Optional[Request] = None):
-        """
-        only a test
-        """
-        print(f"User {user.id} has registered.")
+    def __init__(self) -> None:
+        self.store = UserStore
 
-    async def on_after_forgot_password(self, user: User, token: str, request: Optional[Request] = None):
-        """
-        Only a test
-        """
-        print(f"User {user.id} has forgot their password. Reset token: {token}")
+    async def create(self, user: UserCreateInternal) -> UserInternal:
+        return await self.store.create(user)
 
-    async def on_after_request_verify(self, user: User, token: str, request: Optional[Request] = None):
-        """
-        Only a test
-        """
-        print(f"Verification requested for user {user.id}. Verification token: {token}")
+    async def retrieve(self, user_uuid: UUID4) -> UserInternal:
+        user = await self.store.retrieve(user_uuid)
+        if user is None or not user.is_active:
+            raise CustomNotFoundError(f"User {user_uuid} not found")
+        return user
 
-    async def validate_password(
+    async def authenticate(self, email: str, password: SecretStr) -> UserInternal:
+        user = await self.store.retrieve_by_email(email)
+        if user and not verify_password(password, user.hashed_password):
+            return None
+        return user
+
+    async def list(
         self,
-        password: str,
-        user: UserCreate | User,
-    ) -> None:
-        if len(password) < 12:
-            raise InvalidPasswordException(reason="Password should be at least 12 characters")
-        if user.email in password:
-            raise InvalidPasswordException(reason="Password should not contain e-mail")
-
-
-async def get_user_service(user_db=Depends(get_user_db)):
-    return UserService(user_db)
+        user_filter: UserFilter,
+    ) -> list[UserInternal]:
+        return await self.store.list(user_filter)

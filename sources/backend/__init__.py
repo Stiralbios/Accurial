@@ -1,3 +1,5 @@
 import logging
 
-app_logger = logging.getLogger(__name__)
+from backend.logconfig import LOGGER_NAME
+
+app_logger = logging.getLogger(LOGGER_NAME+__name__)

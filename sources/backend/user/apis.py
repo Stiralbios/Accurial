@@ -1,37 +1,53 @@
-import uuid
+from typing import Annotated
 
-from backend.user.authentification_backends import jwt_auth_backend
-from backend.user.models import User
-from backend.user.schemas import UserCreate, UserRead, UserUpdate
-from backend.user.services import get_user_service
-from fastapi import APIRouter
-from fastapi_users import FastAPIUsers
+from backend.auth.dependencies import get_current_active_user
+from backend.exceptions import CustomAlreadyExistError, CustomNotFoundError
+from backend.user.schemas import UserCreate, UserCreateInternal, UserFilter, UserInternal, UserRead
+from backend.user.services import UserService
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi_filter import FilterDepends
+from pydantic import UUID4
+from starlette import status
 
-fastapi_users = FastAPIUsers[User, uuid.UUID](
-    get_user_service,
-    [jwt_auth_backend],
-)
+from backend.utils.passwords import hash_password
 
-router = APIRouter(prefix="")
+router = APIRouter(prefix="/api/user", tags=["user"])
 
-router.include_router(fastapi_users.get_auth_router(jwt_auth_backend), prefix="/api/auth/jwt", tags=["auth"])
-router.include_router(
-    fastapi_users.get_register_router(UserRead, UserCreate),
-    prefix="/api/user",
-    tags=["user"],
-)
-router.include_router(
-    fastapi_users.get_reset_password_router(),
-    prefix="/api/user",
-    tags=["user"],
-)
-router.include_router(
-    fastapi_users.get_verify_router(UserRead),
-    prefix="/api/user",
-    tags=["user"],
-)
-router.include_router(
-    fastapi_users.get_users_router(UserRead, UserUpdate),
-    prefix="/api/user",
-    tags=["user"],
-)
+
+@router.post("", response_model=UserRead)
+async def create_user(user: UserCreate) -> UserInternal:
+    hashed_password = hash_password(user.password)
+    user_internal = UserCreateInternal.model_validate(
+        {
+            "hashed_password": hashed_password,
+            **user.model_dump(exclude={"password"}, exclude_unset=True)
+         }
+    )
+    try:
+        return await UserService().create(user_internal)
+    except CustomAlreadyExistError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message) from e
+
+
+@router.get(path="/me", response_model=UserRead)
+async def retrieve_user_me(
+    current_user: Annotated[UserInternal, Depends(get_current_active_user)],
+):
+    return current_user
+
+
+@router.get(path="/{user_id}", response_model=UserRead)
+async def retrieve_user(user_id: UUID4) -> UserInternal:
+    try:
+        return await UserService().retrieve(user_id)
+    except CustomNotFoundError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message) from e
+
+
+@router.get(path="/", response_model=list[UserRead])
+async def list_user(user_filter: UserFilter = FilterDepends(UserFilter)) -> list[UserInternal]:
+    # todo manage pagination one day
+    return await UserService().list(user_filter)
+
+
+

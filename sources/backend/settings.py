@@ -8,7 +8,9 @@ class AppSettings(BaseSettings):
     APP_ENVIRONMENT: Literal["PROD", "DEV", "TEST"] = "PROD"
     LOG_LEVEL: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "DEBUG"
     # typing cannot be better cause it can be a docker container name, ip address or url
-    JWT_STRATEGY_SECRET: SecretStr
+    JWT_ALGORITHM: str = "HS256"
+    JWT_SECRET_KEY: SecretStr
+    JWT_ACCESS_TOKEN_EXPIRATION_MINUTES: int = 60
     RESET_PASSWORD_TOKEN_SECRET: SecretStr
     VERIFICATION_TOKEN_SECRET: SecretStr
     POSTGRES_HOST: str = "project_base_postgres"

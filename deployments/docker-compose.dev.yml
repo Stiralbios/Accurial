@@ -15,6 +15,7 @@ services:
       - RESET_PASSWORD_TOKEN_SECRET=OSEF
       - VERIFICATION_TOKEN_SECRET=OSEF
       - DEFAULT_EMAIL=test@test.lan
+      - JWT_SECRET_KEY=OSEF 
       - DEFAULT_PASSWORD=devpassword123
       - PYTHONDONTWRITEBYTECODE=1
     command: ["bash", "./deployments/run_dev.sh"]

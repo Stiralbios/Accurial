@@ -1,23 +1,18 @@
-from typing import AsyncGenerator
+import uuid
 
-from backend.database import Base, async_session_maker
-from fastapi import Depends
-from fastapi_users_db_sqlalchemy import (
-    SQLAlchemyBaseUserTableUUID,
-    SQLAlchemyUserDatabase,
-)
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import relationship
+from backend.database import Base
+from sqlalchemy import Boolean, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 
-async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
-    async with async_session_maker() as session:
-        yield session
+class UserDO(Base):
+    __tablename__ = "user"
 
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
+    hashed_password: Mapped[str] = mapped_column(String(255))
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    is_superuser: Mapped[bool] = mapped_column(Boolean, default=False)
 
-class User(SQLAlchemyBaseUserTableUUID, Base):
+    # Relationships
     questions = relationship("QuestionDO", back_populates="owner")
-
-
-async def get_user_db(session: AsyncSession = Depends(get_async_session)):
-    return SQLAlchemyUserDatabase(session, User)

@@ -2,7 +2,7 @@ import uuid
 
 import uuid6
 from backend.database import Base
-from backend.user.models import User
+from backend.user.models import UserDO
 from sqlalchemy import ForeignKey, String, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -17,4 +17,4 @@ class QuestionDO(Base):
     status: Mapped[str] = mapped_column(String(255))
     owner_id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), ForeignKey("user.id"), nullable=False)
 
-    owner: Mapped[User] = relationship(back_populates="questions")
+    owner: Mapped[UserDO] = relationship(back_populates="questions")
