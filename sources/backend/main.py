@@ -22,7 +22,7 @@ settings = AppSettings()
 
 def custom_exception_handler(loop, context):
     """Allow to see exceptions in ascyncio tassks"""
-    logger = logging.getLogger(LOGGER_NAME+__name__)
+    logger = logging.getLogger(LOGGER_NAME + __name__)
     exception = context.get("exception")
     if exception:
         tb_str = "".join(traceback.format_exception(type(exception), exception, exception.__traceback__))

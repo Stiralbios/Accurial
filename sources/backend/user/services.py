@@ -1,13 +1,11 @@
 from backend.exceptions import CustomNotFoundError
 from backend.user.schemas import UserCreateInternal, UserFilter, UserInternal
 from backend.user.stores import UserStore
-from pydantic import UUID4, SecretStr
-
 from backend.utils.passwords import verify_password
+from pydantic import UUID4, SecretStr
 
 
 class UserService:
-
     def __init__(self) -> None:
         self.store = UserStore
 

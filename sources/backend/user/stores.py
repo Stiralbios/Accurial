@@ -8,7 +8,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class UserStore:
-
     @staticmethod
     @with_async_session
     async def create(session: AsyncSession, user: UserCreateInternal) -> UserInternal:

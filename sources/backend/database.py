@@ -20,7 +20,7 @@ SQLALCHEMY_DATABASE_URL = (
 engine = create_async_engine(SQLALCHEMY_DATABASE_URL)
 
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
-logger = logging.getLogger(LOGGER_NAME+__name__)
+logger = logging.getLogger(LOGGER_NAME + __name__)
 
 
 class Base(DeclarativeBase):

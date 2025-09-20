@@ -1,4 +1,3 @@
-
 from argon2 import PasswordHasher
 from pydantic import SecretStr
 

@@ -21,7 +21,9 @@ router = APIRouter(prefix="/api/question", tags=["question"])
 
 
 @router.post("", response_model=QuestionRead)
-async def create_question(question: QuestionCreate, user: UserInternal = Depends(get_current_active_user)) -> QuestionRead:
+async def create_question(
+    question: QuestionCreate, user: UserInternal = Depends(get_current_active_user)
+) -> QuestionRead:
     question_internal = QuestionCreateInternal.model_validate(
         {**question.model_dump(exclude_unset=True), "owner_id": user.id}
     )
@@ -29,7 +31,9 @@ async def create_question(question: QuestionCreate, user: UserInternal = Depends
 
 
 @router.get(path="/{question_id}", response_model=QuestionRead)
-async def retrieve_question(question_id: uuid.UUID, user: UserInternal = Depends(get_current_active_user)) -> QuestionRead:
+async def retrieve_question(
+    question_id: uuid.UUID, user: UserInternal = Depends(get_current_active_user)
+) -> QuestionRead:
     try:
         return await QuestionService().retrieve(question_id)
     except CustomNotFoundError as e:
@@ -38,7 +42,8 @@ async def retrieve_question(question_id: uuid.UUID, user: UserInternal = Depends
 
 @router.get(path="/", response_model=list[QuestionRead])
 async def list_question(
-    question_filter: QuestionFilter = FilterDepends(QuestionFilter), user: UserInternal = Depends(get_current_active_user)
+    question_filter: QuestionFilter = FilterDepends(QuestionFilter),
+    user: UserInternal = Depends(get_current_active_user),
 ) -> list[QuestionRead]:
     return await QuestionService().list(question_filter)
 
