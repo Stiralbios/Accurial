@@ -1,7 +1,5 @@
 from pydantic import BaseModel
 
-LOGGER_NAME = "accurial."
-
 
 class LogConfig(BaseModel):
     LOGGER_NAME: str = "accurial"
