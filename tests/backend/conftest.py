@@ -60,10 +60,14 @@ async def mock_engine_and_session():
     # Close factory session to not hang on truncate
     factory_session.close()
     # Drop all tables to start with a clean state
-    async with test_async_session_maker() as session:
-        for table in Base.metadata.tables.values():
-            await session.execute(text(f'TRUNCATE TABLE "{table.name}" CASCADE'))
-            await session.commit()
+    try:
+        async with asyncio.timeout(10):
+            async with test_async_session_maker() as session:
+                for table in Base.metadata.tables.values():
+                    await session.execute(text(f'TRUNCATE TABLE "{table.name}" CASCADE'))
+                    await session.commit()
+    except asyncio.TimeoutError:
+        raise RuntimeError("⚠️  TRUNCATE timed out - database may be locked")
     # Patch the engine and async_session_maker in the backend.database module
     with (
         patch("backend.database.engine", isolated_engine),
