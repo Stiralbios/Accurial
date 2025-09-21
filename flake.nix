@@ -24,7 +24,7 @@
             export PYTHONDONTWRITEBYTECODE=1
 
             # necessary to not crash
-            export JWT_STRATEGY_SECRET=OSEF
+            export JWT_SECRET_KEY=OSEF
             export RESET_PASSWORD_TOKEN_SECRET=OSEF
             export VERIFICATION_TOKEN_SECRET=OSEF
           '';

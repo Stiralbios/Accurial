@@ -5,7 +5,8 @@ LOGGER_NAME = "accurial."
 
 class LogConfig(BaseModel):
     LOGGER_NAME: str = "accurial"
-    LOG_FORMAT: str = "%(levelprefix)s %(message)s"
+    UVICORN_LOG_FORMAT: str = "%(levelprefix)s | %(asctime)s | %(name)s.%(module)s:%(lineno)d | %(message)s"
+    APP_LOG_FORMAT: str = "%(levelprefix)s | %(asctime)s | %(name)s:%(lineno)d | %(message)s"
     LOG_LEVEL: str = "DEBUG"
 
     # Logging config
@@ -14,12 +15,17 @@ class LogConfig(BaseModel):
     formatters: dict = {
         "default": {
             "()": "uvicorn.logging.DefaultFormatter",
-            "fmt": LOG_FORMAT,
+            "fmt": APP_LOG_FORMAT,
             "datefmt": "%Y-%m-%d %H:%M:%S",
         },
-        "access": {
+        "uvicorn_default": {
+            "()": "uvicorn.logging.DefaultFormatter",
+            "fmt": UVICORN_LOG_FORMAT,
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        },
+        "uvicorn_access": {
             "()": "uvicorn.logging.AccessFormatter",
-            "fmt": LOG_FORMAT,
+            "fmt": UVICORN_LOG_FORMAT,
             "datefmt": "%Y-%m-%d %H:%M:%S",
         },
     }
@@ -29,15 +35,21 @@ class LogConfig(BaseModel):
             "class": "logging.StreamHandler",
             "stream": "ext://sys.stderr",
         },
-        "access": {
-            "formatter": "access",
+        "uvicorn_default": {
+            "formatter": "uvicorn_default",
+            "class": "logging.StreamHandler",
+            "stream": "ext://sys.stdout",
+        },
+        "uvicorn_access": {
+            "formatter": "uvicorn_access",
             "class": "logging.StreamHandler",
             "stream": "ext://sys.stdout",
         },
     }
     loggers: dict = {
-        "accurial": {"handlers": ["default"], "level": LOG_LEVEL},
-        "uvicorn": {"handlers": ["default"], "level": "INFO"},
-        "uvicorn.error": {"level": "INFO", "handlers": ["default"], "propagate": True},
-        "uvicorn.access": {"handlers": ["access"], "level": "INFO", "propagate": True},
+        "accurial": {"handlers": ["default"], "level": LOG_LEVEL, "propagate": False},
+        "uvicorn": {"handlers": ["uvicorn_default"], "level": "INFO"},
+        "uvicorn.error": {"level": "INFO", "handlers": ["uvicorn_default"], "propagate": True},
+        "uvicorn.access": {"handlers": ["uvicorn_access"], "level": "INFO", "propagate": True},
+        # "sqlalchemy.engine": {"level": "INFO", "propagate": False},
     }

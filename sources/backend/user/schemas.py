@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field, SecretStr
 
 
 class UserBase(BaseModel):
-    email: EmailStr
+    email: EmailStr = Field(examples=["user@test.lan"])
 
 
 class UserRead(UserBase):
@@ -17,13 +17,13 @@ class UserRead(UserBase):
 class UserInternal(UserRead):
     model_config = ConfigDict(from_attributes=True)
 
-    hashed_password: str = Field(examples=["mygreatpassword"])
+    hashed_password: str
 
 
 class UserCreate(UserBase):
     model_config = ConfigDict(extra="forbid")
 
-    password: SecretStr
+    password: SecretStr = Field(examples=["mygreatpassword"])
 
 
 class UserCreateInternal(UserBase):
@@ -32,8 +32,6 @@ class UserCreateInternal(UserBase):
     is_active: bool = True
     is_superuser: bool = False
     hashed_password: str
-
-    # @model_validator(mode="before")
 
 
 class UserFilter(Filter):

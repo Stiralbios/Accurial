@@ -25,7 +25,11 @@ class CustomSQLAlchemyModelFactory(SQLAlchemyModelFactory):
             raise NotImplementedError("Please setup _schema_api_response in your CustomSQLAlchemyModelFactory")
         if isinstance(orm_model, list):
             return [
-                cls._schema_api_response.model_validate(item).model_dump(mode="json", by_alias=True)
+                cls._schema_api_response.model_validate(item, strict=False, from_attributes=True).model_dump(
+                    mode="json", by_alias=True
+                )
                 for item in orm_model
             ]
-        return cls._schema_api_response.model_validate(orm_model).model_dump(mode="json", by_alias=True)
+        return cls._schema_api_response.model_validate(orm_model, strict=False, from_attributes=True).model_dump(
+            mode="json", by_alias=True
+        )

@@ -1,41 +1,27 @@
 import asyncio
 import logging
-import sys
 from contextlib import asynccontextmanager
 from unittest.mock import patch
 
 import pytest
-from backend.user.auth import current_active_user
-from backend.user.models import get_user_db
-from backend.user.schemas import UserCreate, UserInternal
+from backend.auth.dependencies import get_current_active_user
+from backend.database import Base
+from backend.main import app, custom_exception_handler
+from backend.user.schemas import UserCreateInternal
 from backend.user.services import UserService
+from backend.utils.passwords import hash_password
 from fastapi import FastAPI
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy import create_engine, text
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.orm import Session
 
-##########################################################
-# CONFIGURE THE PYTHONPATH                               #
-##########################################################
+logger = logging.getLogger(__name__)
 
-# Add the source root to sys.path if it's not already included
-# todo do the config in the yaml cause here it's hardcoded and will be working only for the docker
-if str("/home/project_base/sources") not in sys.path:
-    sys.path.insert(0, "/home/project_base/sources")
-
-# Add the project root to sys.path if it's not already included
-# todo do the config in the yaml cause here it's hardcoded and will be working only for the docker
-if str("/home/project_base") not in sys.path:
-    sys.path.insert(0, "/home/project_base")
 
 ##########################################################
 # SETUP A TEST DATABASE                                  #
 ##########################################################
-from backend.database import Base  # noqa Import after setting up the python path
-from backend.main import app, custom_exception_handler  # noqa Import after setting up the python path
-
-logger = logging.getLogger(__name__)
 
 TEST_SQLALCHEMY_DATABASE_URL = "postgresql+asyncpg://dev:dev@localhost:5434/dev"
 factory_session = Session(create_engine("postgresql://dev:dev@localhost:5434/dev"))
@@ -68,10 +54,17 @@ async def lifespan(app: FastAPI):
 @pytest.fixture(scope="function")
 async def mock_engine_and_session():
     # todo check for Sessions in factories cause it's only one session on one engine and it could cause weird behavior
-    # Patch the engine and async_session_maker in the backend.database module
     # isolate the engine and session_maker cause we do async tests
-    isolated_engine = create_async_engine(TEST_SQLALCHEMY_DATABASE_URL)
+    isolated_engine = create_async_engine(TEST_SQLALCHEMY_DATABASE_URL, echo=True)
     test_async_session_maker = async_sessionmaker(isolated_engine, expire_on_commit=False)
+    # Close factory session to not hang on truncate
+    factory_session.close()
+    # Drop all tables to start with a clean state
+    async with test_async_session_maker() as session:
+        for table in Base.metadata.tables.values():
+            await session.execute(text(f'TRUNCATE TABLE "{table.name}" CASCADE'))
+            await session.commit()
+    # Patch the engine and async_session_maker in the backend.database module
     with (
         patch("backend.database.engine", isolated_engine),
         patch("backend.database.async_session_maker", test_async_session_maker),
@@ -80,42 +73,33 @@ async def mock_engine_and_session():
         await create_db_and_tables_if_needed(isolated_engine)  # todo check if this could be done once only
         yield
 
-    # tear down, delete everything in the tables and remove the engine
-    async with test_async_session_maker() as session:
-        for table in Base.metadata.tables.values():
-            await session.execute(text(f'TRUNCATE TABLE "{table.name}" CASCADE'))
-            await session.commit()
+    # remove the engine
     await isolated_engine.dispose()
 
 
-async def create_user():
-    isolated_engine = create_async_engine(TEST_SQLALCHEMY_DATABASE_URL)
-    async_session_maker = async_sessionmaker(isolated_engine, expire_on_commit=False)
-    async with async_session_maker() as session:
-        user_db = await get_user_db(session)
-        user_service = UserService(user_db)
-        user = await user_service.create(
-            UserCreate(
-                email="admin@example.com",
-                password="qud!zz*$pmf34V!8xrT%",
-                is_superuser=True,
-            )
-        )
-        return user
+hashed_password = hash_password("password")
 
 
 @pytest.fixture(scope="function")
-async def client_fixture(mock_engine_and_session):
+async def client_fixture(mock_engine_and_session, request):
     # replacing lifespan to not create the tables all the time
     app.router.lifespan_context = lifespan
 
-    test_user = await create_user()
-    app.dependency_overrides[current_active_user] = lambda: UserInternal.model_validate(test_user)
+    auth_override = getattr(request, "param", True)
+
+    if auth_override:
+        user = await UserService().create(
+            UserCreateInternal(
+                email="admin@test.lan", hashed_password=hashed_password, is_active=True, is_superuser=True
+            )
+        )
+
+        app.dependency_overrides[get_current_active_user] = lambda: user
 
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         yield client
 
-    app.dependency_overrides.pop(current_active_user, None)
+    app.dependency_overrides.pop(get_current_active_user, None)
 
 
 @pytest.fixture(scope="session")
