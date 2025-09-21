@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.auth import apis as auth
 from backend.database import create_db_and_tables
 from backend.debug import apis as healthcheck
-from backend.logconfig import LOGGER_NAME, LogConfig
+from backend.logconfig import LogConfig
 from backend.question import apis as question
 from backend.seeders import create_default_superuser
 from backend.settings import AppSettings
@@ -22,7 +22,7 @@ settings = AppSettings()
 
 def custom_exception_handler(loop, context):
     """Allow to see exceptions in ascyncio tassks"""
-    logger = logging.getLogger(LOGGER_NAME + __name__)
+    logger = logging.getLogger(__name__)
     exception = context.get("exception")
     if exception:
         tb_str = "".join(traceback.format_exception(type(exception), exception, exception.__traceback__))

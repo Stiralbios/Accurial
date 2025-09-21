@@ -6,7 +6,6 @@ from typing import Any, AsyncGenerator, Callable, Coroutine
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
-from backend.logconfig import LOGGER_NAME
 from backend.settings import AppSettings
 
 # init settings config
@@ -20,7 +19,7 @@ SQLALCHEMY_DATABASE_URL = (
 engine = create_async_engine(SQLALCHEMY_DATABASE_URL)
 
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
-logger = logging.getLogger(LOGGER_NAME + __name__)
+logger = logging.getLogger(__name__)
 
 
 class Base(DeclarativeBase):

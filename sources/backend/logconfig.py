@@ -6,7 +6,7 @@ LOGGER_NAME = "accurial."
 class LogConfig(BaseModel):
     LOGGER_NAME: str = "accurial"
     UVICORN_LOG_FORMAT: str = "%(levelprefix)s | %(asctime)s | %(name)s.%(module)s:%(lineno)d | %(message)s"
-    APP_LOG_FORMAT: str = "%(levelprefix)s | %(asctime)s | %(name)s:%(lineno)d | %(message)s"
+    APP_LOG_FORMAT: str = "%(levelprefix)s | %(asctime)s | %(name)s:%(lineno)d | Accurial - %(message)s"
     LOG_LEVEL: str = "DEBUG"
 
     # Logging config
@@ -47,7 +47,7 @@ class LogConfig(BaseModel):
         },
     }
     loggers: dict = {
-        "accurial": {"handlers": ["default"], "level": LOG_LEVEL, "propagate": False},
+        "backend": {"handlers": ["default"], "level": LOG_LEVEL, "propagate": False},
         "uvicorn": {"handlers": ["uvicorn_default"], "level": "INFO"},
         "uvicorn.error": {"level": "INFO", "handlers": ["uvicorn_default"], "propagate": True},
         "uvicorn.access": {"handlers": ["uvicorn_access"], "level": "INFO", "propagate": True},

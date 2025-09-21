@@ -1,13 +1,12 @@
 import logging
 
 from backend.exceptions import CustomAlreadyExistError
-from backend.logconfig import LOGGER_NAME
 from backend.settings import InitializationSettings
 from backend.user.schemas import UserCreateInternal
 from backend.user.services import UserService
 from backend.utils.passwords import hash_password
 
-logger = logging.getLogger(LOGGER_NAME + __name__)
+logger = logging.getLogger(__name__)
 
 
 async def create_default_superuser():
