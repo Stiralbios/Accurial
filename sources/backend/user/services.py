@@ -1,4 +1,4 @@
-from backend.exceptions import CustomNotFoundError
+from backend.exceptions import UserNotFoundProblem
 from backend.user.schemas import UserCreateInternal, UserFilter, UserInternal
 from backend.user.stores import UserStore
 from backend.utils.security import verify_password
@@ -15,7 +15,7 @@ class UserService:
     async def retrieve(self, user_uuid: UUID4) -> UserInternal:
         user = await self.store.retrieve(user_uuid)
         if user is None or not user.is_active:
-            raise CustomNotFoundError(f"User {user_uuid} not found")
+            raise UserNotFoundProblem(f"User {user_uuid} not found")
         return user
 
     async def authenticate(self, email: str, password: SecretStr) -> UserInternal:

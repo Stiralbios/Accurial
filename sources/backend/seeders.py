@@ -1,6 +1,6 @@
 import logging
 
-from backend.exceptions import CustomAlreadyExistError
+from backend.exceptions import UserAlreadyExistProblem
 from backend.settings import InitializationSettings
 from backend.user.schemas import UserCreateInternal
 from backend.user.services import UserService
@@ -29,7 +29,7 @@ async def create_default_superuser():
     )
     try:
         await UserService().create(user)
-    except CustomAlreadyExistError:
+    except UserAlreadyExistProblem:
         logger.info("Superuser already exists, skipping creation")
         return
     logger.info(f"Superuser created successfully with email: {email}")

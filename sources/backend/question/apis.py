@@ -1,7 +1,6 @@
 import uuid
 
 from backend.auth.dependencies import get_current_active_user
-from backend.exceptions import CustomNotAllowedError, CustomNotFoundError
 from backend.question.schemas import (
     QuestionCreate,
     QuestionCreateInternal,
@@ -15,7 +14,7 @@ from backend.question.schemas import (
 )
 from backend.question.services import QuestionService
 from backend.user.schemas import UserInternal
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends
 from fastapi_filter import FilterDepends
 from starlette import status
 
@@ -36,10 +35,7 @@ async def create_question(
 async def retrieve_question(
     question_id: uuid.UUID, user: UserInternal = Depends(get_current_active_user)
 ) -> QuestionRead:
-    try:
-        return await QuestionService().retrieve(question_id)
-    except CustomNotFoundError as e:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message) from e
+    return await QuestionService().retrieve(question_id)
 
 
 @router.get(path="/", response_model=list[QuestionRead])
@@ -61,21 +57,10 @@ async def update_question(
     question_internal = QuestionUpdateInternal.model_validate(
         {**question.model_dump(exclude_unset=True), "context": context}
     )
-    try:
-        return await QuestionService().update(question_internal)
-    except CustomNotFoundError as e:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message) from e
-    except CustomNotAllowedError as e:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=e.message) from e
+    return await QuestionService().update(question_internal)
 
 
 @router.delete(path="/{question_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_question(question_id: uuid.UUID, user: UserInternal = Depends(get_current_active_user)):
     question_delete = QuestionDeleteInternal(id=question_id, context=QuestionDeleteContext(user_id=user.id))
-    try:
-        await QuestionService().delete(question_delete)
-        return Response(status_code=status.HTTP_204_NO_CONTENT)
-    except CustomNotFoundError as e:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message) from e
-    except CustomNotAllowedError as e:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=e.message) from e
+    await QuestionService().delete(question_delete)

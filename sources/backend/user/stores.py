@@ -1,5 +1,5 @@
 from backend.database import with_async_session
-from backend.exceptions import CustomAlreadyExistError
+from backend.exceptions import UserAlreadyExistProblem
 from backend.user.models import UserDO
 from backend.user.schemas import UserCreateInternal, UserFilter, UserInternal
 from pydantic import UUID4
@@ -15,7 +15,7 @@ class UserStore:
         res = await session.execute(query)
         orm_object = res.scalar_one_or_none()
         if orm_object is not None:
-            raise CustomAlreadyExistError(f"User email {user.email} is already used")
+            raise UserAlreadyExistProblem(f"User email {user.email} is already used")
         orm_object = UserDO(**user.model_dump())
         session.add(orm_object)
         await session.flush()

@@ -2,7 +2,7 @@ import logging
 import uuid
 
 from backend.database import with_async_session
-from backend.exceptions import CustomNotFoundError
+from backend.exceptions import QuestionNotFoundProblem
 from backend.question.models import QuestionDO
 from backend.question.schemas import QuestionCreateInternal, QuestionFilter, QuestionInternal, QuestionUpdateInternal
 from sqlalchemy import select
@@ -33,7 +33,7 @@ class QuestionStore:
     async def update(session: AsyncSession, question_update: QuestionUpdateInternal) -> QuestionInternal:
         orm_object = await session.get(QuestionDO, question_update.context.id)
         if not orm_object:
-            raise CustomNotFoundError(f"QuestionDO with ID {question_update.context.id} does not exist.")
+            raise QuestionNotFoundProblem(f"QuestionDO with ID {question_update.context.id} does not exist.")
         for field, value in question_update.model_dump(exclude_unset=True, exclude={"context"}).items():
             setattr(orm_object, field, value)
         await session.flush()
@@ -53,6 +53,6 @@ class QuestionStore:
     async def delete(session: AsyncSession, question_uuid: uuid.UUID) -> None:
         orm_object = await session.get(QuestionDO, question_uuid)
         if orm_object is None:
-            raise CustomNotFoundError(f"QuestionDO with ID {question_uuid} does not exist.")
+            raise QuestionNotFoundProblem(f"QuestionDO with ID {question_uuid} does not exist.")
         await session.delete(orm_object)
         await session.flush()

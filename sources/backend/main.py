@@ -4,12 +4,14 @@ import traceback
 from contextlib import asynccontextmanager
 from logging.config import dictConfig
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from backend.auth import apis as auth
 from backend.database import create_db_and_tables
 from backend.debug import apis as healthcheck
+from backend.exceptions import BaseProblem
 from backend.logconfig import LogConfig
 from backend.question import apis as question
 from backend.seeders import create_default_superuser
@@ -68,3 +70,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.exception_handler(BaseProblem)
+async def problem_exception_handler(request: Request, exc: BaseProblem):
+    return JSONResponse(
+        status_code=exc.status,
+        content={"type": exc.kind, "on": exc.entity, "title": exc.title, "detail": exc.detail, "status": exc.status},
+    )

@@ -1,14 +1,12 @@
 from typing import Annotated
 
 from backend.auth.dependencies import get_current_active_user
-from backend.exceptions import CustomAlreadyExistError, CustomNotFoundError
 from backend.user.schemas import UserCreate, UserCreateInternal, UserFilter, UserInternal, UserRead
 from backend.user.services import UserService
 from backend.utils.security import hash_password
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from fastapi_filter import FilterDepends
 from pydantic import UUID4
-from starlette import status
 
 router = APIRouter(prefix="/api/user", tags=["user"])
 
@@ -19,10 +17,7 @@ async def create_user(user: UserCreate) -> UserInternal:
     user_internal = UserCreateInternal.model_validate(
         {"hashed_password": hashed_password, **user.model_dump(exclude={"password"}, exclude_unset=True)}
     )
-    try:
-        return await UserService().create(user_internal)
-    except CustomAlreadyExistError as e:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message) from e
+    return await UserService().create(user_internal)
 
 
 @router.get(path="/me", response_model=UserRead)
@@ -34,10 +29,7 @@ async def retrieve_user_me(
 
 @router.get(path="/{user_id}", response_model=UserRead)
 async def retrieve_user(user_id: UUID4) -> UserInternal:
-    try:
-        return await UserService().retrieve(user_id)
-    except CustomNotFoundError as e:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message) from e
+    return await UserService().retrieve(user_id)
 
 
 @router.get(path="/", response_model=list[UserRead])
