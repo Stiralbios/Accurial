@@ -2,7 +2,7 @@ from enum import StrEnum, auto
 
 
 class PredictionType(StrEnum):
-    BINARY = auto() # yes or no question 
+    BINARY = auto()  # yes or no question
 
 
 class QuestionStatus(StrEnum):
