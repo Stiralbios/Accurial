@@ -74,3 +74,12 @@ class QuestionFilter(Filter):
 
     class Constants(Filter.Constants):
         model = QuestionDO
+
+
+class QuestionDeleteContext(BaseModel):
+    user_id: uuid.UUID
+
+
+class QuestionDeleteInternal(BaseModel):
+    id: uuid.UUID
+    context: QuestionDeleteContext

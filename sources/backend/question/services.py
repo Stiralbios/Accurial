@@ -2,7 +2,13 @@ import uuid
 
 from backend.exceptions import CustomNotAllowedError, CustomNotFoundError
 from backend.question.constants import QuestionStatus
-from backend.question.schemas import QuestionCreateInternal, QuestionFilter, QuestionInternal, QuestionUpdateInternal
+from backend.question.schemas import (
+    QuestionCreateInternal,
+    QuestionDeleteInternal,
+    QuestionFilter,
+    QuestionInternal,
+    QuestionUpdateInternal,
+)
 from backend.question.stores import QuestionStore
 
 
@@ -33,9 +39,14 @@ class QuestionService:
             )
         return await self.store.update(question)
 
-    async def delete(self, question_uuid: uuid.UUID) -> None:
-        question = await self.store.retrieve(question_uuid)
-        if question and question.status != QuestionStatus.DRAFT:
-            raise CustomNotAllowedError(f"Question {question_uuid} isn't in draft, you should archive it")
-        await self.store.delete(question_uuid)
+    async def delete(self, question: QuestionDeleteInternal) -> None:
+        question_retrieved = await self.store.retrieve(question.id)
+        if question_retrieved:
+            if question.context.user_id != question_retrieved.owner_id:
+                raise CustomNotAllowedError(
+                    f"User {question.context.user_id} is not allowed to delete question {question.id}."
+                )
+            if question_retrieved.status != QuestionStatus.DRAFT:
+                raise CustomNotAllowedError(f"Question {question.id} isn't in draft, you should archive it")
+        await self.store.delete(question.id)
         return None

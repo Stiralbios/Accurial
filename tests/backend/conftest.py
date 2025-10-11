@@ -7,12 +7,13 @@ import pytest
 from backend.auth.dependencies import get_current_active_user
 from backend.database import Base
 from backend.main import app, custom_exception_handler
+from backend.user.models import UserDO
 from backend.user.schemas import UserCreateInternal
 from backend.user.services import UserService
 from backend.utils.security import hash_password
 from fastapi import FastAPI
 from httpx import ASGITransport, AsyncClient
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine, select, text
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.orm import Session
 
@@ -104,6 +105,17 @@ async def client_fixture(mock_engine_and_session, request):
         yield client
 
     app.dependency_overrides.pop(get_current_active_user, None)
+
+
+async def get_auth_userdo():
+    # dirty by who cares
+    isolated_engine = create_async_engine(TEST_SQLALCHEMY_DATABASE_URL, echo=True)
+    test_async_session_maker = async_sessionmaker(isolated_engine, expire_on_commit=False)
+    async with test_async_session_maker() as session:
+        stmt = select(UserDO).where(UserDO.email == "admin@test.lan")
+        result = await session.execute(stmt)
+        orm_object = result.scalar_one_or_none()
+        return orm_object
 
 
 @pytest.fixture(scope="session")

@@ -5,6 +5,8 @@ from backend.exceptions import CustomNotAllowedError, CustomNotFoundError
 from backend.question.schemas import (
     QuestionCreate,
     QuestionCreateInternal,
+    QuestionDeleteContext,
+    QuestionDeleteInternal,
     QuestionFilter,
     QuestionRead,
     QuestionUpdate,
@@ -69,8 +71,9 @@ async def update_question(
 
 @router.delete(path="/{question_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_question(question_id: uuid.UUID, user: UserInternal = Depends(get_current_active_user)):
+    question_delete = QuestionDeleteInternal(id=question_id, context=QuestionDeleteContext(user_id=user.id))
     try:
-        await QuestionService().delete(question_id)
+        await QuestionService().delete(question_delete)
         return Response(status_code=status.HTTP_204_NO_CONTENT)
     except CustomNotFoundError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message) from e

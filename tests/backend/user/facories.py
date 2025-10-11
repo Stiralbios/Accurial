@@ -14,7 +14,7 @@ class UserFactory(CustomSQLAlchemyModelFactory):
     class Meta:
         model = UserDO
 
-    email = factory.Sequence(lambda n: "user{}@test.lan".format(n))
+    email = factory.Sequence(lambda n: f"user{n}@test.lan")
     hashed_password = default_hashed_password
     is_superuser = False
     is_active = True
