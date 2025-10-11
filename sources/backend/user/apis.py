@@ -4,7 +4,7 @@ from backend.auth.dependencies import get_current_active_user
 from backend.exceptions import CustomAlreadyExistError, CustomNotFoundError
 from backend.user.schemas import UserCreate, UserCreateInternal, UserFilter, UserInternal, UserRead
 from backend.user.services import UserService
-from backend.utils.passwords import hash_password
+from backend.utils.security import hash_password
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_filter import FilterDepends
 from pydantic import UUID4

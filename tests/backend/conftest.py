@@ -9,7 +9,7 @@ from backend.database import Base
 from backend.main import app, custom_exception_handler
 from backend.user.schemas import UserCreateInternal
 from backend.user.services import UserService
-from backend.utils.passwords import hash_password
+from backend.utils.security import hash_password
 from fastapi import FastAPI
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy import create_engine, text

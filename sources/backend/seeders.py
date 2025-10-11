@@ -4,7 +4,7 @@ from backend.exceptions import CustomAlreadyExistError
 from backend.settings import InitializationSettings
 from backend.user.schemas import UserCreateInternal
 from backend.user.services import UserService
-from backend.utils.passwords import hash_password
+from backend.utils.security import hash_password
 
 logger = logging.getLogger(__name__)
 

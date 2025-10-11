@@ -23,3 +23,6 @@ clean:
 
 go_in_docker:
 	docker exec -it project_base_dev /bin/bash
+
+test:
+	poetry run pytest
