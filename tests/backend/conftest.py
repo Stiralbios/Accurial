@@ -24,8 +24,8 @@ logger = logging.getLogger(__name__)
 # SETUP A TEST DATABASE                                  #
 ##########################################################
 
-TEST_SQLALCHEMY_DATABASE_URL = "postgresql+asyncpg://dev:dev@localhost:5434/dev"
-factory_session = Session(create_engine("postgresql://dev:dev@localhost:5434/dev"))
+TEST_SQLALCHEMY_DATABASE_URL = "postgresql+psycopg_async://dev:dev@localhost:5434/dev"
+factory_session = Session(create_engine("postgresql+psycopg://dev:dev@localhost:5434/dev"))
 table_created = False
 
 

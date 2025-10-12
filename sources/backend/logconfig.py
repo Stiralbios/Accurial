@@ -47,7 +47,7 @@ class LogConfig(BaseModel):
     loggers: dict = {
         "backend": {"handlers": ["default"], "level": LOG_LEVEL, "propagate": False},
         "uvicorn": {"handlers": ["uvicorn_default"], "level": "INFO"},
-        "uvicorn.error": {"level": "INFO", "handlers": ["uvicorn_default"], "propagate": True},
-        "uvicorn.access": {"handlers": ["uvicorn_access"], "level": "INFO", "propagate": True},
+        "uvicorn.error": {"level": "INFO", "handlers": ["uvicorn_default"], "propagate": False},
+        "uvicorn.access": {"handlers": ["uvicorn_access"], "level": "INFO", "propagate": False},
         # "sqlalchemy.engine": {"level": "INFO", "propagate": False},
     }
