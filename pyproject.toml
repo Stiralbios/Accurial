@@ -8,7 +8,7 @@ authors = ["Aurélien Vezin <aurelien.vezin.dev@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.12"
-fastapi = {extras = ["standard"], version = "^0.115.2"}
+fastapi = {extras = ["standard"], version = "^0.119.0"}
 pendulum = "^3.0.0"
 SQLAlchemy = "^2.0.21"
 pydantic = "^2.4.2"
