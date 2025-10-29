@@ -1,4 +1,3 @@
-import logging
 import uuid
 
 from backend.database import with_async_session
@@ -7,9 +6,6 @@ from backend.question.models import QuestionDO
 from backend.question.schemas import QuestionCreateInternal, QuestionFilter, QuestionInternal, QuestionUpdateInternal
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-
-logging.basicConfig()
-logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
 
 
 class QuestionStore:
@@ -33,7 +29,7 @@ class QuestionStore:
     async def update(session: AsyncSession, question_update: QuestionUpdateInternal) -> QuestionInternal:
         orm_object = await session.get(QuestionDO, question_update.context.id)
         if not orm_object:
-            raise QuestionNotFoundProblem(f"QuestionDO with ID {question_update.context.id} does not exist.")
+            raise QuestionNotFoundProblem(f"Question with ID {question_update.context.id} does not exist.")
         for field, value in question_update.model_dump(exclude_unset=True, exclude={"context"}).items():
             setattr(orm_object, field, value)
         await session.flush()

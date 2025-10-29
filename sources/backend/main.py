@@ -13,6 +13,7 @@ from backend.database import create_db_and_tables
 from backend.debug import apis as healthcheck
 from backend.exceptions import BaseProblem
 from backend.logconfig import LogConfig
+from backend.prediction import apis as prediction
 from backend.question import apis as question
 from backend.seeders import create_default_superuser
 from backend.settings import AppSettings
@@ -57,6 +58,7 @@ app.include_router(healthcheck.router)
 app.include_router(user.router)
 app.include_router(auth.router)
 app.include_router(question.router)
+app.include_router(prediction.router)
 
 
 # frontend port connection

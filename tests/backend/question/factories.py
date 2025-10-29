@@ -1,5 +1,6 @@
 import factory
-from backend.question.constants import PredictionType, QuestionStatus
+from backend.prediction.constants import PredictionType
+from backend.question.constants import QuestionStatus
 from backend.question.models import QuestionDO
 from backend.question.schemas import QuestionRead
 

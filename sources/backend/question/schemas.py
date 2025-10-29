@@ -1,7 +1,8 @@
 import uuid
 from typing import Any, Optional
 
-from backend.question.constants import PredictionType, QuestionStatus
+from backend.prediction.constants import PredictionType
+from backend.question.constants import QuestionStatus
 from backend.question.models import QuestionDO
 from fastapi_filter.contrib.sqlalchemy import Filter
 from pydantic import BaseModel, ConfigDict, Field, field_validator

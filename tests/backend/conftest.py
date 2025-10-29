@@ -3,6 +3,7 @@ import logging
 from contextlib import asynccontextmanager
 from unittest.mock import patch
 
+import psycopg
 import pytest
 from backend.auth.dependencies import get_current_active_user
 from backend.database import Base
@@ -69,6 +70,8 @@ async def mock_engine_and_session():
                     await session.commit()
     except asyncio.TimeoutError:
         raise RuntimeError("⚠️  TRUNCATE timed out - database may be locked")
+    except psycopg.errors.UndefinedTable:
+        pass  # when new tables are added they may not exists. ignoring the error
     # Patch the engine and async_session_maker in the backend.database module
     with (
         patch("backend.database.engine", isolated_engine),

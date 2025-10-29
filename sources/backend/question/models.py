@@ -18,3 +18,4 @@ class QuestionDO(Base):
     owner_id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), ForeignKey("user.id"), nullable=False)
 
     owner: Mapped[UserDO] = relationship(back_populates="questions")
+    predictions = relationship("PredictionDO", back_populates="question")

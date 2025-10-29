@@ -12,6 +12,7 @@ class ProblemKind(StrEnum):
 class Entity(StrEnum):
     USER = auto()
     QUESTION = auto()
+    PREDICTION = auto()
 
 
 class BaseProblem(Exception):
@@ -64,4 +65,16 @@ class QuestionAlreadyExistProblem(BaseProblem):
 class QuestionNotAllowedProblem(BaseProblem):
     kind = ProblemKind.NOT_ALLOWED
     entity = Entity.QUESTION
+    status = status.HTTP_403_FORBIDDEN
+
+
+class PredictionNotFoundProblem(BaseProblem):
+    kind = ProblemKind.NOT_FOUND
+    status = status.HTTP_404_NOT_FOUND
+    entity = Entity.PREDICTION
+
+
+class PredictionNotAllowedProblem(BaseProblem):
+    kind = ProblemKind.NOT_ALLOWED
+    entity = Entity.PREDICTION
     status = status.HTTP_403_FORBIDDEN
