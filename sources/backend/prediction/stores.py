@@ -28,7 +28,7 @@ class PredictionStore:
         except sqlalchemy.exc.IntegrityError as e:
             # TODO make is generic
             error_str = str(e.orig)
-            key_match = re.search(r'Key \((.+?)\)=\((.+?)\)', error_str)
+            key_match = re.search(r"Key \((.+?)\)=\((.+?)\)", error_str)
             if key_match:
                 # name = key_match.group(1)
                 value = key_match.group(2)

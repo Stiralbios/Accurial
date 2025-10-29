@@ -1,4 +1,3 @@
-
 import uuid
 
 from backend.exceptions import PredictionNotAllowedProblem, PredictionNotFoundProblem, UserNotAllowedProblem
@@ -37,8 +36,11 @@ class PredictionService:
             raise UserNotAllowedProblem(
                 f"User {prediction.context.user_id} is not allowed to update prediction {prediction.context.id}."
             )
-        if (prediction_retrieved and prediction_retrieved.status != PredictionStatus.DRAFT
-                and any([prediction.title, prediction.description, prediction.value])):
+        if (
+            prediction_retrieved
+            and prediction_retrieved.status != PredictionStatus.DRAFT
+            and any([prediction.title, prediction.description, prediction.value])
+        ):
             raise PredictionNotAllowedProblem(
                 f"Cannot change the title, description, value for prediction in status {prediction.status}."
             )

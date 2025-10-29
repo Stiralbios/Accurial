@@ -1,5 +1,3 @@
-
-
 import uuid
 
 from backend.auth.dependencies import get_current_active_user
