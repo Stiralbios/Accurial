@@ -40,6 +40,7 @@ async def test_create_prediction(client_fixture, data):
     identifier = response_data.pop("id")
     owner_id = response_data.pop("owner_id")
     created_at = response_data.pop("created_at")
+    published_at = response_data.pop("published_at")
 
     assert response_data == {
         **data,
@@ -48,6 +49,7 @@ async def test_create_prediction(client_fixture, data):
     assert uuid.UUID(identifier)
     assert uuid.UUID(owner_id)
     assert created_at == datetime.now(timezone.utc).strftime(format="%Y-%m-%dT%H:%M:%S")
+    assert published_at is None
 
 
 @pytest.mark.parametrize("client_fixture", [False], indirect=True)
@@ -91,19 +93,20 @@ async def test_retrieve_prediction_no_user(client_fixture):
     assert response.status_code == 401
 
 
+@freeze_time("2024-01-03")
 @pytest.mark.parametrize(
     "data",
     [
         pytest.param({"title": "Updated prediction title"}, id="update-title"),
         pytest.param({"description": "New description"}, id="update-description"),
         pytest.param({"value": {"binary": False}}, id="update-value"),
-        pytest.param({"status": PredictionStatus.CREATED}, id="update-status"),
+        pytest.param({"status": PredictionStatus.PUBLISHED}, id="update-status"),
         pytest.param(
             {
                 "title": "Full update",
                 "description": "New description",
                 "value": {"binary": False},
-                "status": PredictionStatus.CREATED,
+                "status": PredictionStatus.PUBLISHED,
             },
             id="full-update",
         ),
@@ -118,6 +121,8 @@ async def test_update_prediction(client_fixture, data):
     assert response.status_code == 200
     for key, value in data.items():
         setattr(prediction, key, value)
+    if data.get("status") == PredictionStatus.PUBLISHED:
+        setattr(prediction, "published_at", datetime.now())
     assert response.json() == PredictionFactory.to_api_response_data(prediction)
 
 
@@ -133,7 +138,7 @@ async def test_update_prediction_wrong_user(client_fixture):
 
 async def test_update_non_draft_prediction(client_fixture):
     user = await get_auth_userdo()
-    prediction = PredictionFactory(owner=user, status=PredictionStatus.CREATED)
+    prediction = PredictionFactory(owner=user, status=PredictionStatus.PUBLISHED)
 
     response = await client_fixture.patch(
         f"/api/prediction/{prediction.id}", json={"title": "Should fail", "value": {"binary": False}}
@@ -151,7 +156,7 @@ async def test_update_non_draft_prediction(client_fixture):
             id="status_draft",
         ),
         pytest.param(
-            {"query_params": {"status": PredictionStatus.CREATED}, "nb_expected_results": 1},
+            {"query_params": {"status": PredictionStatus.PUBLISHED}, "nb_expected_results": 1},
             id="status_created",
         ),
         pytest.param(
@@ -175,7 +180,7 @@ async def test_list_predictions(client_fixture, data):
     # Given
     user = await get_auth_userdo()
     PredictionFactory.create_batch(2, owner=user, status=PredictionStatus.DRAFT)
-    PredictionFactory(owner=user, status=PredictionStatus.CREATED)
+    PredictionFactory(owner=user, status=PredictionStatus.PUBLISHED)
     # When
     response = await client_fixture.get("/api/prediction/", params=data["query_params"])
     # Then

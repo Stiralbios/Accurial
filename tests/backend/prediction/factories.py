@@ -22,6 +22,7 @@ class PredictionFactory(CustomSQLAlchemyModelFactory):
     type = PredictionType.BINARY
     status = PredictionStatus.DRAFT
     created_at = factory.LazyFunction(lambda: datetime.now(timezone.utc))
+    published_at = None
     value = factory.LazyFunction(lambda: PredictionValueBinary(binary=True).model_dump())
     owner_id = factory.LazyAttribute(lambda o: o.owner.id if o.owner else None)
     question_id = factory.LazyAttribute(lambda o: o.question.id if o.question else None)

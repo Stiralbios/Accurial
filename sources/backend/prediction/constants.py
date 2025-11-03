@@ -7,5 +7,5 @@ class PredictionType(StrEnum):
 
 class PredictionStatus(StrEnum):
     DRAFT = auto()
-    CREATED = auto()
+    PUBLISHED = auto()
     CLOSED = auto()

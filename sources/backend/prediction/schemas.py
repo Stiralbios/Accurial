@@ -28,6 +28,7 @@ class PredictionRead(PredictionBase):
     id: uuid.UUID
     status: PredictionStatus
     created_at: datetime
+    published_at: datetime | None
     owner_id: uuid.UUID
 
 
@@ -68,6 +69,8 @@ class PredictionUpdateContext(BaseModel):
 
 class PredictionUpdateInternal(PredictionUpdate):
     context: PredictionUpdateContext
+
+    published_at: Optional[datetime] = Field(default=None)
 
 
 class PredictionFilter(Filter):
