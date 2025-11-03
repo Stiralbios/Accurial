@@ -105,7 +105,7 @@ async def test_retrieve_prediction_no_user(client_fixture):
                 "value": {"binary": False},
                 "status": PredictionStatus.CREATED,
             },
-            id="full-update"
+            id="full-update",
         ),
     ],
 )
@@ -113,10 +113,7 @@ async def test_update_prediction(client_fixture, data):
     # Given
     prediction = PredictionFactory(owner=await get_auth_userdo(), status=PredictionStatus.DRAFT)
     # When
-    response = await client_fixture.patch(
-        f"/api/prediction/{prediction.id}", 
-        json=data
-    )
+    response = await client_fixture.patch(f"/api/prediction/{prediction.id}", json=data)
     # Then
     assert response.status_code == 200
     for key, value in data.items():
@@ -127,29 +124,19 @@ async def test_update_prediction(client_fixture, data):
 async def test_update_prediction_wrong_user(client_fixture):
     other_user = UserFactory()
     prediction = PredictionFactory(owner=other_user)
-    
-    response = await client_fixture.patch(
-        f"/api/prediction/{prediction.id}",
-        json={"title": "Unauthorized update"}
-    )
-    
+
+    response = await client_fixture.patch(f"/api/prediction/{prediction.id}", json={"title": "Unauthorized update"})
+
     assert response.status_code == 403
-    assert re.match(
-        r"User [0-9a-f-]{36} is not allowed to update prediction [0-9a-f-]{36}",
-        response.json()["detail"]
-    )
+    assert re.match(r"User [0-9a-f-]{36} is not allowed to update prediction [0-9a-f-]{36}", response.json()["detail"])
 
 
 async def test_update_non_draft_prediction(client_fixture):
     user = await get_auth_userdo()
-    prediction = PredictionFactory(
-        owner=user,
-        status=PredictionStatus.CREATED
-    )
+    prediction = PredictionFactory(owner=user, status=PredictionStatus.CREATED)
 
     response = await client_fixture.patch(
-        f"/api/prediction/{prediction.id}",
-        json={"title": "Should fail", "value": {"binary": False}}
+        f"/api/prediction/{prediction.id}", json={"title": "Should fail", "value": {"binary": False}}
     )
 
     assert response.status_code == 403
@@ -172,7 +159,10 @@ async def test_update_non_draft_prediction(client_fixture):
             id="type_binary",
         ),
         pytest.param(
-            {"query_params": {"status": PredictionStatus.DRAFT, "type": PredictionType.BINARY}, "nb_expected_results": 2},
+            {
+                "query_params": {"status": PredictionStatus.DRAFT, "type": PredictionType.BINARY},
+                "nb_expected_results": 2,
+            },
             id="status_draft_and_type_binary",
         ),
         pytest.param(
@@ -185,15 +175,9 @@ async def test_list_predictions(client_fixture, data):
     # Given
     user = await get_auth_userdo()
     PredictionFactory.create_batch(2, owner=user, status=PredictionStatus.DRAFT)
-    PredictionFactory(
-        owner=user, 
-        status=PredictionStatus.CREATED
-    )
+    PredictionFactory(owner=user, status=PredictionStatus.CREATED)
     # When
-    response = await client_fixture.get(
-        "/api/prediction/",
-        params=data["query_params"]
-    )
+    response = await client_fixture.get("/api/prediction/", params=data["query_params"])
     # Then
     assert response.status_code == 200
     results = response.json()
