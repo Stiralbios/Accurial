@@ -24,7 +24,7 @@ beautifulsoup4 = "^4"
 lxml = "^5"
 asyncpg = "^0"
 alembic = "^1"
-cryptography = "^45"
+cryptography = "^46"
 pyjwt = "^2"
 argon2-cffi = "^25"
 psycopg = {extras = ["binary", "pool"], version = "^3"}
