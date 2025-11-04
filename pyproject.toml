@@ -8,38 +8,39 @@ authors = ["Aurélien Vezin <aurelien.vezin.dev@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.12"
-fastapi = {extras = ["standard"], version = "^0.115.2"}
-pendulum = "^3.0.0"
-SQLAlchemy = "^2.0.21"
-pydantic = "^2.4.2"
-pydantic-settings = "^2.0.3"
-websockets = "^14.1"
-fastapi-filter = "^2.0.0"
-requests = "^2.31.0"
-uuid6 = "^2025.0.1"
-aiocache = "^0.12.2"
-pydantic-extra-types = "^2.8.0"
-pycountry = "^24.6.1"
-beautifulsoup4 = "^4.12.3"
-lxml = "^5.2.2"
-asyncpg = "^0.30.0"
-alembic = "^1.14.0"
-cryptography = "^45.0.7"
-pyjwt = "^2.10.1"
-argon2-cffi = "^25.1.0"
-psycopg = {extras = ["binary", "pool"], version = "^3.2.10"}
+fastapi = {extras = ["standard"], version = "^0"}
+pendulum = "^3"
+SQLAlchemy = "^2"
+pydantic = "^2"
+pydantic-settings = "^2"
+websockets = "^14"
+fastapi-filter = "^2"
+requests = "^2"
+uuid6 = "^2025"
+aiocache = "^0"
+pydantic-extra-types = "^2"
+pycountry = "^24"
+beautifulsoup4 = "^4"
+lxml = "^5"
+asyncpg = "^0"
+alembic = "^1"
+cryptography = "^45"
+pyjwt = "^2"
+argon2-cffi = "^25"
+psycopg = {extras = ["binary", "pool"], version = "^3"}
+loguru = "^0"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^8.0.0"
-coverage = {extras = ["toml"], version = "^7.3.1"}
-pytest-cov = "^6.0.0"
-pytest-mock = "^3.15.1"
+pytest = "^8"
+coverage = {extras = ["toml"], version = "^7"}
+pytest-cov = "^6"
+pytest-mock = "^3"
 flake8 = "^7.0.0"
 bandit = "^1.7.4"
 mypy = "^1.6.1"
-pytest-asyncio = "^0.24.0"
-freezegun = "^1.5.1"
-factory-boy = "^3.3.1"
+pytest-asyncio = "^0"
+freezegun = "^1"
+factory-boy = "^3"
 
 [tool.ruff]
 line-length = 120
