@@ -33,7 +33,7 @@ loguru = "^0"
 [tool.poetry.group.dev.dependencies]
 pytest = "^8"
 coverage = {extras = ["toml"], version = "^7"}
-pytest-cov = "^6"
+pytest-cov = "^7"
 pytest-mock = "^3"
 flake8 = "^7.0.0"
 bandit = "^1.7.4"
