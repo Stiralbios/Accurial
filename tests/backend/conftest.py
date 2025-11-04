@@ -5,6 +5,7 @@ from unittest.mock import patch
 
 import psycopg
 import pytest
+import sqlalchemy
 from backend.auth.dependencies import get_current_active_user
 from backend.database import Base
 from backend.main import app, custom_exception_handler
@@ -35,6 +36,9 @@ async def create_db_and_tables_if_needed(engine):
         global table_created
         if not table_created:
             try:
+                # first test run:  we drop the tables for safety (exemple: a column changed and the db isn't clean)
+                # then we create the tables
+                await conn.run_sync(Base.metadata.drop_all)
                 await conn.run_sync(Base.metadata.create_all)
                 table_created = True
             except Exception as e:
@@ -61,7 +65,8 @@ async def mock_engine_and_session():
     test_async_session_maker = async_sessionmaker(isolated_engine, expire_on_commit=False)
     # Close factory session to not hang on truncate
     factory_session.close()
-    # Drop all tables to start with a clean state
+    # Trucate all tables to start with a clean state
+    # Trucate is faster than droping all tables all the time
     try:
         async with asyncio.timeout(10):
             async with test_async_session_maker() as session:
@@ -70,15 +75,16 @@ async def mock_engine_and_session():
                     await session.commit()
     except asyncio.TimeoutError:
         raise RuntimeError("⚠️  TRUNCATE timed out - database may be locked")
-    except psycopg.errors.UndefinedTable:
-        pass  # when new tables are added they may not exists. ignoring the error
+    except (psycopg.errors.UndefinedTable, sqlalchemy.exc.ProgrammingError):
+        # when new tables are added they may not exists. ignoring the error, same for columns.
+        # this is handled in create_db_and_tables_if_needed
+        pass
     # Patch the engine and async_session_maker in the backend.database module
     with (
         patch("backend.database.engine", isolated_engine),
         patch("backend.database.async_session_maker", test_async_session_maker),
     ):
-        # create tables
-        await create_db_and_tables_if_needed(isolated_engine)  # todo check if this could be done once only
+        await create_db_and_tables_if_needed(isolated_engine)
         yield
 
     # remove the engine
