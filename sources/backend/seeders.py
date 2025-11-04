@@ -10,7 +10,6 @@ logger = logging.getLogger(__name__)
 
 
 async def create_default_superuser():
-    pass
     email = InitializationSettings().DEFAULT_EMAIL
     secret_password = InitializationSettings().DEFAULT_PASSWORD
 
