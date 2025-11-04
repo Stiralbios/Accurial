@@ -8,17 +8,10 @@ from sqlalchemy.orm import DeclarativeBase
 
 from backend.settings import AppSettings
 
-# init settings config
-settings = AppSettings()
+_engine_instance = None
+_async_sessionmaker = None
 
-SQLALCHEMY_DATABASE_URL = (
-    f"postgresql+psycopg_async://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD.get_secret_value()}@"
-    f"{settings.POSTGRES_HOST}:{settings.POSTGRES_PORT}/{settings.POSTGRES_DB}"
-)
 
-engine = create_async_engine(SQLALCHEMY_DATABASE_URL)
-
-async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
 logger = logging.getLogger(__name__)
 
 
@@ -26,7 +19,35 @@ class Base(DeclarativeBase):
     pass
 
 
+def get_engine():
+    global _engine_instance
+    if _engine_instance is None:
+        settings = AppSettings()
+        sql_alchemy_database_url = (
+            f"postgresql+psycopg_async://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD.get_secret_value()}@"
+            f"{settings.POSTGRES_HOST}:{settings.POSTGRES_PORT}/{settings.POSTGRES_DB}"
+        )
+        _engine_instance = create_async_engine(
+            sql_alchemy_database_url,
+            # a little bit more sensible default
+            pool_size=10,  # Default connections kept open
+            max_overflow=10,  # Additional connections allowed during spikes
+            pool_timeout=30,  # Max seconds to wait for connection
+            # Recycle connections after 30 minutes /!\  because on postgres side it's recycled after 1h
+            pool_recycle=1800,
+        )
+    return _engine_instance
+
+
+def get_async_sessionmaker():
+    global _async_sessionmaker
+    if _async_sessionmaker is None:
+        _async_sessionmaker = async_sessionmaker(get_engine(), expire_on_commit=False)
+    return _async_sessionmaker
+
+
 async def create_db_and_tables():
+    engine = get_engine()
     async with engine.begin() as conn:
         try:
             logger.info(f"Tables to create {repr(Base.metadata.tables)}")
@@ -38,7 +59,8 @@ async def create_db_and_tables():
 
 @asynccontextmanager
 async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
-    async with async_session_maker() as session:
+    async_sessionmaker = get_async_sessionmaker()
+    async with async_sessionmaker() as session:
         async with session.begin():
             yield session
 

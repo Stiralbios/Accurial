@@ -81,8 +81,8 @@ async def mock_engine_and_session():
         pass
     # Patch the engine and async_session_maker in the backend.database module
     with (
-        patch("backend.database.engine", isolated_engine),
-        patch("backend.database.async_session_maker", test_async_session_maker),
+        patch("backend.database._engine_instance", isolated_engine),
+        patch("backend.database._async_sessionmaker", test_async_session_maker),
     ):
         await create_db_and_tables_if_needed(isolated_engine)
         yield
