@@ -1,18 +1,14 @@
-import logging
 from contextlib import asynccontextmanager
 from functools import wraps
 from typing import Any, AsyncGenerator, Callable, Coroutine
 
+from backend.settings import AppSettings
+from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
-from backend.settings import AppSettings
-
 _engine_instance = None
 _async_sessionmaker = None
-
-
-logger = logging.getLogger(__name__)
 
 
 class Base(DeclarativeBase):

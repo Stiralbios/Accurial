@@ -1,53 +1,60 @@
-from pydantic import BaseModel
+# code mostly from https://gist.github.com/nkhitrov/a3e31cfcc1b19cba8e1b626276148c49
+import inspect
+import logging
+import sys
+
+from backend.settings import AppSettings
+from loguru import logger
 
 
-class LogConfig(BaseModel):
-    LOGGER_NAME: str = "accurial"
-    UVICORN_LOG_FORMAT: str = "%(levelprefix)s | %(asctime)s | %(name)s.%(module)s:%(lineno)d | %(message)s"
-    APP_LOG_FORMAT: str = "%(levelprefix)s | %(asctime)s | %(name)s:%(lineno)d | Accurial - %(message)s"
-    LOG_LEVEL: str = "DEBUG"
+class InterceptHandler(logging.Handler):
+    """
+    Default handler from examples in loguru documentaion.
+    See https://loguru.readthedocs.io/en/stable/overview.html#entirely-compatible-with-standard-logging
+    """
 
-    # Logging config
-    version: int = 1
-    disable_existing_logger: bool = False
-    formatters: dict = {
-        "default": {
-            "()": "uvicorn.logging.DefaultFormatter",
-            "fmt": APP_LOG_FORMAT,
-            "datefmt": "%Y-%m-%d %H:%M:%S",
-        },
-        "uvicorn_default": {
-            "()": "uvicorn.logging.DefaultFormatter",
-            "fmt": UVICORN_LOG_FORMAT,
-            "datefmt": "%Y-%m-%d %H:%M:%S",
-        },
-        "uvicorn_access": {
-            "()": "uvicorn.logging.AccessFormatter",
-            "fmt": UVICORN_LOG_FORMAT,
-            "datefmt": "%Y-%m-%d %H:%M:%S",
-        },
-    }
-    handlers: dict = {
-        "default": {
-            "formatter": "default",
-            "class": "logging.StreamHandler",
-            "stream": "ext://sys.stderr",
-        },
-        "uvicorn_default": {
-            "formatter": "uvicorn_default",
-            "class": "logging.StreamHandler",
-            "stream": "ext://sys.stdout",
-        },
-        "uvicorn_access": {
-            "formatter": "uvicorn_access",
-            "class": "logging.StreamHandler",
-            "stream": "ext://sys.stdout",
-        },
-    }
-    loggers: dict = {
-        "backend": {"handlers": ["default"], "level": LOG_LEVEL, "propagate": False},
-        "uvicorn": {"handlers": ["uvicorn_default"], "level": "INFO"},
-        "uvicorn.error": {"level": "INFO", "handlers": ["uvicorn_default"], "propagate": False},
-        "uvicorn.access": {"handlers": ["uvicorn_access"], "level": "INFO", "propagate": False},
-        # "sqlalchemy.engine": {"level": "INFO", "propagate": False},
-    }
+    def emit(self, record: logging.LogRecord):
+        # Get corresponding Loguru level if it exists
+        level: str | int
+        try:
+            level = logger.level(record.levelname).name
+        except ValueError:
+            level = record.levelno
+
+        # Find caller from where originated the logged message.
+        frame, depth = inspect.currentframe(), 0
+        while frame and (depth == 0 or frame.f_code.co_filename == logging.__file__):
+            frame = frame.f_back
+            depth += 1
+
+        logger.opt(depth=depth, exception=record.exc_info).log(level, record.getMessage())
+
+
+def configure_loggers():
+    """
+    Replaces logging handlers with a handler for using the custom handler.
+
+    WARNING!
+    if you call the init_logging in startup event function,
+    then the first logs before the application start will be in the old format
+    """
+    settings = AppSettings()
+    # remove all loguru loggers
+    logger.remove()
+
+    # Remove and replace base loggers handlers with loguru ones
+    # Remove propagation to not have double logs
+    override_loggers_names = (
+        name
+        for name in logging.root.manager.loggerDict
+        if (name.startswith("uvicorn.") or name.startswith("sqlalchemy."))
+    )
+    intercept_handler = InterceptHandler()
+    for logger_name in override_loggers_names:
+        logger_to_override = logging.getLogger(logger_name)
+        logger_to_override.handlers = []
+        logging.getLogger(logger_name).handlers = [intercept_handler]
+        logging.getLogger(logger_name).propagate = False
+
+    # set logs output, level and format for all our loggers
+    logger.configure(handlers=[{"sink": sys.stderr, "level": settings.LOG_LEVEL, "colorize": True}])

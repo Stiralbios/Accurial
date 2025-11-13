@@ -1,31 +1,31 @@
 import asyncio
-import logging
 import traceback
 from contextlib import asynccontextmanager
-from logging.config import dictConfig
-
-from fastapi import FastAPI, Request
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 
 from backend.auth import apis as auth
 from backend.database import create_db_and_tables
 from backend.debug import apis as healthcheck
 from backend.exceptions import BaseProblem
-from backend.logconfig import LogConfig
+from backend.logconfig import configure_loggers
 from backend.prediction import apis as prediction
 from backend.question import apis as question
 from backend.seeders import create_default_superuser
 from backend.settings import AppSettings
 from backend.user import apis as user
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from loguru import logger
 
 # init settings config
 settings = AppSettings()
 
+# init the log
+configure_loggers()
+
 
 def custom_exception_handler(loop, context):
-    """Allow to see exceptions in ascyncio tassks"""
-    logger = logging.getLogger(__name__)
+    """Allow to see exceptions in ascyncio tasks"""
     exception = context.get("exception")
     if exception:
         tb_str = "".join(traceback.format_exception(type(exception), exception, exception.__traceback__))
@@ -49,9 +49,6 @@ async def lifespan(app: FastAPI):
 
 # init fastAPI
 app = FastAPI(debug=True, lifespan=lifespan)
-
-# init logger
-dictConfig(LogConfig(LOG_LEVEL=settings.LOG_LEVEL).model_dump())
 
 # Including routers
 app.include_router(healthcheck.router)
