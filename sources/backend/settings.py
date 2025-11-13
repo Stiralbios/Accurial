@@ -18,6 +18,7 @@ class AppSettings(BaseSettings):
     POSTGRES_USER: str = "dev"
     POSTGRES_PASSWORD: SecretStr = "dev"
     POSTGRES_DB: str = "dev"
+    ALLOWED_CORS_ORIGINS: list[str]
 
 
 class InitializationSettings(BaseSettings):
