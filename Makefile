@@ -26,3 +26,6 @@ go_in_docker:
 
 test:
 	poetry run pytest
+
+run_dev_frontend:
+	cd sources/frontend && npm run dev 
