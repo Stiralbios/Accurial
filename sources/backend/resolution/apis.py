@@ -62,9 +62,7 @@ async def update_resolution(
 
 
 @router.delete("/{resolution_id}")
-async def delete_resolution(
-    resolution_id: uuid.UUID, user: UserInternal = Depends(get_current_active_user)
-) -> dict[str, str]:
+async def delete_resolution(resolution_id: uuid.UUID, user: UserInternal = Depends(get_current_active_user)) -> None:
     resolution_delete_internal = ResolutionDeleteInternal(
         id=resolution_id, context=ResolutionDeleteContext(user_id=user.id)
     )
