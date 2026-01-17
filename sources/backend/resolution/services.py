@@ -56,8 +56,7 @@ class ResolutionService:
     async def update(self, resolution: ResolutionUpdateInternal) -> ResolutionInternal:
         resolution_retrieved = await self.store.retrieve(resolution.context.id)
         if resolution_retrieved:
-            question = await self.question_service.retrieve(resolution_retrieved.question_id)
-            if resolution.context.user_id != question.owner_id:
+            if resolution.context.user_id != resolution_retrieved.owner_id:
                 raise UserNotAllowedProblem(
                     f"User {resolution.context.user_id} is not allowed to update resolution {resolution.context.id}."
                 )
@@ -66,8 +65,7 @@ class ResolutionService:
     async def delete(self, resolution: ResolutionDeleteInternal) -> None:
         resolution_retrieved = await self.store.retrieve(resolution.id)
         if resolution_retrieved:
-            question = await self.question_service.retrieve(resolution_retrieved.question_id)
-            if resolution.context.user_id != question.owner_id:
+            if resolution.context.user_id != resolution_retrieved.owner_id:
                 raise UserNotAllowedProblem(
                     f"User {resolution.context.user_id} is not allowed to delete resolution {resolution.id}."
                 )
