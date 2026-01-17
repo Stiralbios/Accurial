@@ -4,6 +4,6 @@ async def test_get_status(client_fixture):
     # Then
     assert response.status_code == 200
     assert response.json() == {
-        "stack": {"python": "3.12.10 (main, Apr  8 2025, 11:35:47) [GCC 14.2.1 20250322]"},
+        "stack": {"python": "3.12.12 (main, Oct  9 2025, 11:07:00) [GCC 15.2.0]"},
         "status": "ok",
     }

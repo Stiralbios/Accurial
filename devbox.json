@@ -1,0 +1,24 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.16.0/.schema/devbox.schema.json",
+  "name":    "dev-environment",
+  "packages": [
+    "python312@latest",
+    "poetry@latest",
+    "pre-commit@latest",
+    "postgresql@17",
+    "nodejs@latest",
+    "gcc@latest"
+  ],
+  "env": {
+    "PYTHONDONTWRITEBYTECODE":     "1",
+    "JWT_SECRET_KEY":              "OSEF",
+    "RESET_PASSWORD_TOKEN_SECRET": "OSEF",
+    "VERIFICATION_TOKEN_SECRET":   "OSEF",
+    "ALLOWED_CORS_ORIGINS":        "[\"*\"]"
+  },
+  "shell": {
+    "init_hook": [
+       "export LD_LIBRARY_PATH=\"$LD_LIBRARY_PATH:$(dirname $(gcc --print-file-name=libstdc++.so.6))\""
+    ]
+  }
+}

@@ -12,7 +12,7 @@ build_docker:
 
 # somehow it need to be rebuild to check new files todo fix
 run_precommit:
-	nix develop . --command pre-commit run --all-files
+	devbox run pre-commit run --all-files
 
 install_hooks:
 	chmod +x deployments/hooks/*
