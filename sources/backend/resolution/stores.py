@@ -31,9 +31,7 @@ class ResolutionStore:
 
     @staticmethod
     @with_async_session
-    async def retrieve_by_question_id(
-        session: AsyncSession, question_id: uuid.UUID
-    ) -> ResolutionInternal | None:
+    async def retrieve_by_question_id(session: AsyncSession, question_id: uuid.UUID) -> ResolutionInternal | None:
         query = select(ResolutionDO).where(ResolutionDO.question_id == question_id)
         result = await session.execute(query)
         orm_object = result.scalar_one_or_none()
