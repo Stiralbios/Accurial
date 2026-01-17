@@ -9,6 +9,7 @@ from backend.exceptions import BaseProblem
 from backend.logconfig import configure_loggers
 from backend.prediction import apis as prediction
 from backend.question import apis as question
+from backend.resolution import apis as resolution
 from backend.seeders import create_default_superuser
 from backend.settings import AppSettings
 from backend.user import apis as user
@@ -56,6 +57,7 @@ app.include_router(user.router)
 app.include_router(auth.router)
 app.include_router(question.router)
 app.include_router(prediction.router)
+app.include_router(resolution.router)
 
 
 # CORS middleware

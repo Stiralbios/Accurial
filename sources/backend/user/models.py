@@ -17,3 +17,4 @@ class UserDO(Base):
     # Relationships
     questions = relationship("QuestionDO", back_populates="owner")
     predictions = relationship("PredictionDO", back_populates="owner")
+    resolutions = relationship("ResolutionDO", back_populates="owner")

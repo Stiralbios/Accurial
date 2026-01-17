@@ -19,3 +19,4 @@ class QuestionDO(Base):
 
     owner: Mapped[UserDO] = relationship(back_populates="questions")
     predictions = relationship("PredictionDO", back_populates="question")
+    resolution = relationship("ResolutionDO", back_populates="question", uselist=False)
