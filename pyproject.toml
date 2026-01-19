@@ -31,7 +31,7 @@ psycopg = {extras = ["binary", "pool"], version = "^3"}
 loguru = "^0"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^8"
+pytest = "^9"
 coverage = {extras = ["toml"], version = "^7"}
 pytest-cov = "^6"
 pytest-mock = "^3"
