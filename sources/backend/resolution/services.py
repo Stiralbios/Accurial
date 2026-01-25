@@ -7,6 +7,7 @@ from backend.exceptions import (
     UserNotAllowedProblem,
 )
 from backend.question.constants import QuestionStatus
+from backend.question.schemas import QuestionUpdateContext, QuestionUpdateInternal
 from backend.question.stores import QuestionStore
 from backend.resolution.schemas import (
     ResolutionCreateInternal,
@@ -29,7 +30,6 @@ class ResolutionService:
             raise ResolutionNotFoundProblem(f"Resolution {resolution_uuid} not found")
         return resolution
 
-    # TODO Fire an event when a resolution is created to then update the question's status
     async def create(self, resolution: ResolutionCreateInternal) -> ResolutionInternal:
         question = await self.question_store.retrieve(resolution.question_id)
 
@@ -37,7 +37,7 @@ class ResolutionService:
             raise QuestionNotFoundProblem(f"Question {resolution.question_id} not found")
         if question.owner_id != resolution.owner_id:
             raise UserNotAllowedProblem(
-                f"User {resolution.user_id} is not allowed to create a resolution for question {question.id}."
+                f"User {resolution.owner_id} is not allowed to create a resolution for question {question.id}."
             )
 
         if question.status not in [QuestionStatus.OPEN]:
@@ -45,7 +45,16 @@ class ResolutionService:
                 f"Question {resolution.question_id} must be in OPEN or CLOSED status to be resolved"
             )
 
-        return await self.store.create(resolution)
+        created_resolution = await self.store.create(resolution)
+
+        question_update_context = QuestionUpdateContext(id=question.id, user_id=resolution.owner_id)
+        question_update = QuestionUpdateInternal(
+            context=question_update_context,
+            status=QuestionStatus.CLOSED,
+        )
+        await self.question_store.update(question_update)
+
+        return created_resolution
 
     async def list(
         self,

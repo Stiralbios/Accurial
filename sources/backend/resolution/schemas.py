@@ -22,6 +22,7 @@ class ResolutionRead(ResolutionBase):
 
     id: uuid.UUID
     question_id: uuid.UUID
+    owner_id: uuid.UUID
 
 
 class ResolutionInternal(ResolutionRead):
@@ -36,7 +37,9 @@ class ResolutionCreate(ResolutionBase):
 
 
 class ResolutionCreateInternal(ResolutionCreate):
-    pass
+    owner_id: uuid.UUID = Field(
+        description="The ID of the user who owns this resolution", examples=["123e4567-e89b-12d3-a456-426614174000"]
+    )
 
 
 class ResolutionUpdate(BaseModel):

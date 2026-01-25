@@ -15,8 +15,9 @@ from backend.resolution.schemas import (
 from backend.resolution.services import ResolutionService
 from backend.user.schemas import UserInternal
 from fastapi import APIRouter, Depends
+from starlette import status
 
-router = APIRouter(prefix="/resolutions", tags=["resolution"])
+router = APIRouter(prefix="/api/resolutions", tags=["resolution"])
 
 
 @router.post("", response_model=ResolutionRead)
@@ -61,7 +62,7 @@ async def update_resolution(
     return await ResolutionService().update(resolution_update_internal)
 
 
-@router.delete("/{resolution_id}")
+@router.delete(path="/{resolution_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_resolution(resolution_id: uuid.UUID, user: UserInternal = Depends(get_current_active_user)) -> None:
     resolution_delete_internal = ResolutionDeleteInternal(
         id=resolution_id, context=ResolutionDeleteContext(user_id=user.id)
