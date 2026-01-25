@@ -29,3 +29,6 @@ test:
 
 run_dev_frontend:
 	cd sources/frontend && npm run dev 
+
+stow:
+	cd devconfigs/stow && stow -t ../.. . 
