@@ -47,7 +47,7 @@ async def list_resolutions(
     return await ResolutionService().list(resolution_filter)
 
 
-@router.put("/{resolution_id}", response_model=ResolutionRead)
+@router.patch("/{resolution_id}", response_model=ResolutionRead)
 async def update_resolution(
     resolution_id: uuid.UUID,
     resolution: ResolutionUpdate,

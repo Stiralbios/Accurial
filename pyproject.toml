@@ -7,7 +7,7 @@ package-mode = false
 authors = ["Aurélien Vezin <aurelien.vezin.dev@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "3.12.*"
 fastapi = {extras = ["standard"], version = "^0"}
 pendulum = "^3"
 SQLAlchemy = "^2"
