@@ -8,7 +8,7 @@ jobs:
     name: Ruff formatter
     steps:
       - name: Check out source repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Ruff format
         uses: astral-sh/ruff-action@v3
         with:
@@ -18,7 +18,7 @@ jobs:
     name: Flake8 linter
     steps:
       - name: Check out source repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Set up Python environment
         uses: actions/setup-python@v6
         with:
@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out source repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 #      - name: Export pyproject.toml to requirements.txt
 #        uses: divideprojects/poetry-export-requirements-action@v1
 #        with:
