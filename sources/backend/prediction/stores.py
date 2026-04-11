@@ -1,9 +1,8 @@
-import re
 import uuid
 
 import sqlalchemy
 from backend.database import with_async_session
-from backend.exceptions import PredictionNotFoundProblem, QuestionNotFoundProblem
+from backend.exceptions import PredictionNotFoundProblem
 from backend.prediction.models import PredictionDO
 from backend.prediction.schemas import (
     PredictionCreateInternal,
@@ -11,6 +10,7 @@ from backend.prediction.schemas import (
     PredictionInternal,
     PredictionUpdateInternal,
 )
+from backend.utils.error_handling import handle_foreign_key_violation
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -26,13 +26,7 @@ class PredictionStore:
             await session.refresh(orm_object)
             return PredictionInternal.model_validate(orm_object)
         except sqlalchemy.exc.IntegrityError as e:
-            # TODO make is generic
-            error_str = str(e.orig)
-            key_match = re.search(r"Key \((.+?)\)=\((.+?)\)", error_str)
-            if key_match:
-                # name = key_match.group(1)
-                value = key_match.group(2)
-                raise QuestionNotFoundProblem(f"Question {value} not found")
+            handle_foreign_key_violation(e)
 
     @staticmethod
     @with_async_session

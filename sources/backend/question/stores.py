@@ -1,9 +1,11 @@
 import uuid
 
+import sqlalchemy
 from backend.database import with_async_session
 from backend.exceptions import QuestionNotFoundProblem
 from backend.question.models import QuestionDO
 from backend.question.schemas import QuestionCreateInternal, QuestionFilter, QuestionInternal, QuestionUpdateInternal
+from backend.utils.error_handling import handle_foreign_key_violation
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -12,11 +14,14 @@ class QuestionStore:
     @staticmethod
     @with_async_session
     async def create(session: AsyncSession, question: QuestionCreateInternal) -> QuestionInternal:
-        orm_object = QuestionDO(**question.model_dump())
-        session.add(orm_object)
-        await session.flush()
-        await session.refresh(orm_object)
-        return QuestionInternal.model_validate(orm_object)
+        try:
+            orm_object = QuestionDO(**question.model_dump())
+            session.add(orm_object)
+            await session.flush()
+            await session.refresh(orm_object)
+            return QuestionInternal.model_validate(orm_object)
+        except sqlalchemy.exc.IntegrityError as e:
+            handle_foreign_key_violation(e)
 
     @staticmethod
     @with_async_session

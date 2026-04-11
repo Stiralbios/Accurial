@@ -1,5 +1,6 @@
 import uuid
 
+import sqlalchemy
 from backend.database import with_async_session
 from backend.exceptions import ResolutionNotFoundProblem
 from backend.resolution.models import ResolutionDO
@@ -9,6 +10,7 @@ from backend.resolution.schemas import (
     ResolutionInternal,
     ResolutionUpdateInternal,
 )
+from backend.utils.error_handling import handle_foreign_key_violation
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -17,11 +19,14 @@ class ResolutionStore:
     @staticmethod
     @with_async_session
     async def create(session: AsyncSession, resolution: ResolutionCreateInternal) -> ResolutionInternal:
-        orm_object = ResolutionDO(**resolution.model_dump())
-        session.add(orm_object)
-        await session.flush()
-        await session.refresh(orm_object)
-        return ResolutionInternal.model_validate(orm_object)
+        try:
+            orm_object = ResolutionDO(**resolution.model_dump())
+            session.add(orm_object)
+            await session.flush()
+            await session.refresh(orm_object)
+            return ResolutionInternal.model_validate(orm_object)
+        except sqlalchemy.exc.IntegrityError as e:
+            handle_foreign_key_violation(e)
 
     @staticmethod
     @with_async_session
