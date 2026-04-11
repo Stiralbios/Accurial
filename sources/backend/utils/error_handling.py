@@ -1,7 +1,6 @@
 import re
 
 import sqlalchemy
-
 from backend.exceptions import (
     QuestionNotFoundProblem,
     UserNotFoundProblem,
