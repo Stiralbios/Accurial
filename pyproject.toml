@@ -7,7 +7,7 @@ package-mode = false
 authors = ["Aurélien Vezin <aurelien.vezin.dev@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "3.12.*"
+python = "3.13.*"
 fastapi = {extras = ["standard"], version = "^0"}
 pendulum = "^3"
 SQLAlchemy = "^2"
@@ -44,7 +44,7 @@ factory-boy = "^3"
 
 [tool.ruff]
 line-length = 120
-target-version = "py312"
+target-version = "py313"
 
 [tool.ruff.format]
 docstring-code-format = true
