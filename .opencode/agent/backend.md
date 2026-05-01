@@ -22,6 +22,7 @@ You are a backend specialist agent. Generate only backend Python code and backen
 - Never import inside methods/functions
 - Run tests from the venv when necessary
 - Add tests for modified and new code
+- You must be in the devbox env to run any command
 
 ### Domain
 - Backend Python code in `sources/backend/`
