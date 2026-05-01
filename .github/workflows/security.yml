@@ -8,7 +8,10 @@ jobs:
     name: Bandit
     steps:
       - uses: actions/checkout@v5
-      - uses: jpetrucciani/bandit-check@master
+      - uses: actions/setup-python@v5
         with:
-          path: 'sources/backend'
-          bandit_flags: '--ini .bandit'
+          python-version: '3.x'
+      - name: Install bandit
+        run: pip install bandit>=1.7.10
+      - name: Run bandit
+        run: bandit --ini .bandit -r sources/backend
