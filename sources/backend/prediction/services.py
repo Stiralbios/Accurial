@@ -35,6 +35,12 @@ class PredictionService:
         prediction_retrieved = await self.store.retrieve(prediction.context.id)
         await self._ensure_update_is_possible(prediction, prediction_retrieved)
 
+        if prediction.status and prediction_retrieved.status != prediction.status:
+            if not PredictionStatus.can_transition_to(prediction_retrieved.status, prediction.status):
+                raise PredictionNotAllowedProblem(
+                    f"Cannot transition prediction from {prediction_retrieved.status} to {prediction.status}"
+                )
+
         if (
             prediction_retrieved
             and prediction_retrieved.status == PredictionStatus.DRAFT

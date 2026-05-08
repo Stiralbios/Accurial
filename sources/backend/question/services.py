@@ -37,6 +37,11 @@ class QuestionService:
             raise UserNotAllowedProblem(
                 f"User {question.context.user_id} is not allowed to update question {question.context.id}."
             )
+        if question.status and question_retrieved.status != question.status:
+            if not QuestionStatus.can_transition_to(question_retrieved.status, question.status):
+                raise QuestionNotAllowedProblem(
+                    f"Cannot transition question from {question_retrieved.status} to {question.status}"
+                )
         return await self.store.update(question)
 
     async def delete(self, question: QuestionDeleteInternal) -> None:

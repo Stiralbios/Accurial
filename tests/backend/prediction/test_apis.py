@@ -148,6 +148,26 @@ async def test_update_non_draft_prediction(client_fixture):
     assert "Cannot change the title, description, value" in response.json()["detail"]
 
 
+async def test_update_prediction_invalid_status_transition(client_fixture):
+    user = await get_auth_userdo()
+    prediction = PredictionFactory(owner=user, status=PredictionStatus.DRAFT)
+
+    response = await client_fixture.patch(f"/api/prediction/{prediction.id}", json={"status": "closed"})
+
+    assert response.status_code == 403
+    assert "Cannot transition prediction" in response.json()["detail"]
+
+
+async def test_update_prediction_valid_status_transition(client_fixture):
+    user = await get_auth_userdo()
+    prediction = PredictionFactory(owner=user, status=PredictionStatus.DRAFT)
+
+    response = await client_fixture.patch(f"/api/prediction/{prediction.id}", json={"status": "published"})
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "published"
+
+
 @pytest.mark.parametrize(
     "data",
     [

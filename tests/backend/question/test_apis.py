@@ -191,6 +191,33 @@ async def test_delete_question_not_draft(client_fixture):
     assert response.json()["detail"] == f"Question {question.id} isn't in draft, you should archive it"
 
 
+async def test_update_question_invalid_status_transition(client_fixture):
+    question = QuestionFactory(owner=await get_auth_userdo(), status=QuestionStatus.DRAFT)
+
+    response = await client_fixture.patch(f"/api/question/{question.id}", json={"status": "closed"})
+
+    assert response.status_code == 403
+    assert "Cannot transition question" in response.json()["detail"]
+
+
+async def test_update_question_valid_status_transition_draft_to_open(client_fixture):
+    question = QuestionFactory(owner=await get_auth_userdo(), status=QuestionStatus.DRAFT)
+
+    response = await client_fixture.patch(f"/api/question/{question.id}", json={"status": "open"})
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "open"
+
+
+async def test_update_question_valid_status_transition_open_to_closed(client_fixture):
+    question = QuestionFactory(owner=await get_auth_userdo(), status=QuestionStatus.OPEN)
+
+    response = await client_fixture.patch(f"/api/question/{question.id}", json={"status": "closed"})
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "closed"
+
+
 async def test_delete_question_doesnt_exist(client_fixture):
     response = await client_fixture.delete(f"/api/question/{uuid.uuid4()}")
     assert response.status_code == 404
