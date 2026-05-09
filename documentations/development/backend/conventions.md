@@ -51,6 +51,38 @@ async def create_question(
 6. **API converts** external schemas to internal before passing to services
 7. **Internal schemas** contain `context` for business logic, `owner_id` for ownership
 
+## Session Management Convention
+
+Store methods use the `@with_async_session` decorator for automatic session handling. This decorator has **dual behavior**:
+
+### Auto-Created Session (Default)
+
+When called normally (no session argument), the decorator creates a new `AsyncSession` with full transaction management:
+
+```python
+# In a service or API layer
+await QuestionStore.create(question_internal)  # Session created automatically
+```
+
+### Existing Session Reuse
+
+When called with an existing `AsyncSession` argument, the decorator passes it through **without** creating a new transaction. This enables multi-store operations within a single transaction:
+
+```python
+async with get_async_session() as session:
+    question = await QuestionStore.create(session, question_data)
+    prediction = await PredictionStore.create(session, prediction_data)
+    # Both operations are in the same transaction
+```
+
+This is achieved by the decorator inspecting arguments for an existing `AsyncSession` instance. Store method signatures declare `session: AsyncSession` as the first parameter, but callers typically omit it — the decorator handles injection based on context.
+
+### When to Reuse Sessions
+
+- **Single store call**: Let the decorator auto-create (default)
+- **Multi-store atomic operation**: Pass a shared session explicitly
+- **Service chaining**: If a service calls multiple stores, consider whether atomicity is needed
+
 ## Schema Rules
 
 - `Base` = shared fields
