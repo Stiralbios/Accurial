@@ -22,7 +22,7 @@ Guidelines for agentic coding assistants working on this repository.
 - **Use tools** to create and modify files — never describe changes in text only
 - Make **minimal changes** to achieve the goal
 - Follow the **existing code style** of the project
-- **Never** run `git commit`, `git push`, `git reset`, or `git rebase` unless explicitly asked
+- **Always** perform commits through the [`git-commit-pusher`](.opencode/agents/git-commit-pusher.md) agent. Only the user should invoke git-commit-pusher.
 - **Never install** or delete anything outside the working directory without confirmation
 
 ## Backend Critical Conventions
