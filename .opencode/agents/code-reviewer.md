@@ -45,7 +45,25 @@ Check against the following documentation files. Read them to load the full conv
 
 ### 2. Frontend TypeScript/React Reviews
 
-Check against `documentations/frontend/setup.md`.
+Check against the following documentation files. Read them to load the full conventions before reviewing:
+
+- **Setup, tech stack, scripts** — `documentations/frontend/setup.md`
+- **Layered architecture** — `documentations/frontend/architecture/overview.md`
+- **Feature directory pattern** — `documentations/frontend/architecture/folder-structure.md`
+- **Read/write paths, layer boundaries (component → feature hook → generated client)** — `documentations/frontend/architecture/data-flow.md`
+- **Server vs client state rules (TanStack Query vs Zustand)** — `documentations/frontend/architecture/state-management.md`
+- **Style, naming, ESLint rules, no `any`, no default exports** — `documentations/frontend/conventions/coding-style.md`
+- **Component conventions** — `documentations/frontend/conventions/components.md`
+- **Hook conventions, query keys, optimistic updates** — `documentations/frontend/conventions/hooks.md`
+- **API client / fetch wrapper / generated client usage** — `documentations/frontend/conventions/services.md`
+- **Generated TS types vs Zod schemas, structural assertion** — `documentations/frontend/conventions/schemas-and-types.md`
+- **React Hook Form + Zod patterns** — `documentations/frontend/conventions/forms.md`
+- **Tailwind conventions, design tokens** — `documentations/frontend/conventions/styling.md`
+- **TanStack Router file-based routes, guards, search-param validation** — `documentations/frontend/conventions/routing.md`
+- **Auth flow + backend prerequisites** — `documentations/frontend/features/auth.md`
+- **`BaseProblem` → `ApiError` mapping, error UI patterns** — `documentations/frontend/error-handling.md`
+- **Vitest + RTL + MSW, factories, test layout** — `documentations/frontend/testing.md`
+- **TDD step-by-step for new features** — `documentations/frontend/adding-a-feature.md`
 
 ### 3. Security Reviews
 

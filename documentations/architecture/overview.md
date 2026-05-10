@@ -23,10 +23,15 @@ High-level system design of Accurial.
 
 ### Frontend
 
-- **React 19** + **TypeScript** + **Vite**
-- Currently in early development (template stage)
-- API client in `sources/frontend/app/services/api.tsx`
-- CSS styling with standard CSS files
+- **React 19** + **TypeScript** + **Vite** (SWC plugin)
+- **TanStack Query** for server state, **Zustand** for client state
+- **TanStack Router** (file-based) for routing
+- **React Hook Form** + **Zod** for forms and validation
+- **Tailwind CSS** for styling
+- **Orval** generates a fully-typed TanStack Query client from the backend's OpenAPI schema
+- **Vitest** + **React Testing Library** + **MSW** for tests
+- Auth via **httpOnly cookies** (target convention — see `frontend/features/auth.md` for backend prerequisites)
+- Feature-based folder layout under `sources/frontend/app/features/<feature>/`
 
 ### Backend
 

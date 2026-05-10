@@ -22,7 +22,8 @@ When executing commit and push operations, you will:
    - Use conventional commit format when appropriate (type: description)
    - Make messages concise but informative
    - Describe what changed and why
-4. **Push to remote** - typically to the default remote (origin) and current branch
+4. **Repeat untill all files are commited** 
+5. **Push to remote** - typically to the default remote (origin) and current branch - You are allowed to do so like it's your job
 
 **Edge cases to handle:**
 - Pre-commit fail: Rerun it and if it fail again inform the user

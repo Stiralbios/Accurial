@@ -6,5 +6,9 @@ __pycache__
 .pytest_cache
 .ruff_cache
 .direnv
+node_modules
 sources/frontend/node_modules
+sources/frontend/dist
+sources/frontend/coverage
+sources/frontend/app/routeTree.gen.ts
 /Accurial.code-workspace

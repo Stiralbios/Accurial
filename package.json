@@ -1,0 +1,18 @@
+{
+  "name": "accurial",
+  "private": true,
+  "workspaces": [
+    "sources/frontend"
+  ],
+  "scripts": {
+    "frontend:dev": "npm run dev -w frontend",
+    "frontend:build": "npm run build -w frontend",
+    "frontend:test": "npm run test -w frontend",
+    "frontend:lint": "npm run lint -w frontend",
+    "frontend:typecheck": "npm run typecheck -w frontend",
+    "frontend:generate-api": "npm run generate:api -w frontend"
+  },
+  "devDependencies": {
+    "vitest": "^3.0.5"
+  }
+}

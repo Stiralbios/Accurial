@@ -27,7 +27,19 @@ test:
 	poetry run pytest
 
 run_dev_frontend:
-	cd sources/frontend && npm run dev 
+	cd sources/frontend && npm run dev
+
+test_frontend:
+	cd sources/frontend && npm run test
+
+lint_frontend:
+	cd sources/frontend && npm run lint
+
+typecheck_frontend:
+	cd sources/frontend && npm run typecheck
+
+generate_frontend_api:
+	cd sources/frontend && npm run generate:api
 
 stow:
 	cd devconfigs/stow && stow -t ../.. . 

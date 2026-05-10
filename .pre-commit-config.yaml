@@ -22,3 +22,30 @@ repos:
     hooks:
     -   id: mypy
         args: ["--config-file", "mypy.ini"]
+-   repo: local
+    hooks:
+    -   id: frontend-lint
+        name: frontend eslint
+        language: system
+        entry: bash -c 'cd sources/frontend && npm run lint --silent'
+        files: ^(sources/frontend|tests/frontend)/.*\.(ts|tsx|js)$
+        pass_filenames: false
+    -   id: frontend-typecheck
+        name: frontend tsc --noEmit
+        language: system
+        entry: bash -c 'cd sources/frontend && npm run typecheck --silent'
+        files: ^(sources/frontend|tests/frontend)/.*\.(ts|tsx)$
+        pass_filenames: false
+    -   id: frontend-format
+        name: frontend prettier check
+        language: system
+        entry: bash -c 'cd sources/frontend && npm run format:check --silent'
+        files: ^(sources/frontend|tests/frontend)/.*\.(ts|tsx|js|json|css|md)$
+        pass_filenames: false
+    -   id: frontend-test
+        name: frontend vitest
+        language: system
+        entry: bash -c 'cd sources/frontend && npm run test --silent'
+        files: ^(sources/frontend|tests/frontend)/.*\.(ts|tsx)$
+        pass_filenames: false
+        stages: [pre-push]
