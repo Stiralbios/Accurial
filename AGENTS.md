@@ -18,7 +18,6 @@ Guidelines for agentic coding assistants working on this repository.
 
 ## General Agent Rules
 
-- Use the **same language** as the user
 - **Use tools** to create and modify files — never describe changes in text only
 - Make **minimal changes** to achieve the goal
 - Follow the **existing code style** of the project
