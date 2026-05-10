@@ -67,6 +67,7 @@ All detailed documentation lives in the [`documentations/`](./documentations/) d
 |---|---|
 | `.opencode/agents/backend.md` | Backend agent deep-dive (conventions, patterns, architecture guidelines) |
 | `.opencode/agents/git-commit-pusher.md` | Git workflow conventions for committing and pushing |
+| `.opencode/agents/code-reviewer.md` | Code review subagent for backend, frontend, and project conventions |
 | `documentations/architecture/overview.md` | High-level system design |
 | `documentations/architecture/backend-structure.md` | Feature directory pattern and file responsibilities |
 | `documentations/architecture/data-flow.md` | Request lifecycle and layer boundaries |

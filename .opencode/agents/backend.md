@@ -9,7 +9,7 @@ description: >-
 mode: primary
 ---
 
-# BACKEND.md
+# Backend developper
 
 This file provides guidelines for an agentic coding assistant for backend code working on this repository.
 
