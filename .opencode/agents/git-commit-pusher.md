@@ -5,7 +5,7 @@ description: >-
   "commit and push my changes", "write commit and push", "git commit and push
   the new feature", "stage my changes and push to origin"
 mode: subagent
-model: ollama-cloud/devstral-small-2:24b-cloud
+model: ollama-cloud/kimi-k2.6
 permission:
   edit: deny
 ---
