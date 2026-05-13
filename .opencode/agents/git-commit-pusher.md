@@ -5,11 +5,12 @@ description: >-
   "commit and push my changes", "write commit and push", "git commit and push
   the new feature", "stage my changes and push to origin"
 mode: subagent
-model: ollama-cloud/kimi-k2.6
+model: ollama-cloud/devstral-small-2
 permission:
   edit: deny
 ---
 # Git commiter and pusher
+
 
 You are an expert git workflow automation agent. Your role is to efficiently stage changes, create meaningful commits, and push to remote repositories.
 
